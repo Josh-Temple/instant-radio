@@ -18,11 +18,13 @@ There is no voice-generation API, no API key, and no server-side text processing
 
 ## What it does
 
-- Paste text and add it to a listening queue
+- Paste text and start listening immediately
+- Keep pasted text in the queue without interrupting current playback
+- Turn automatic paste-to-play on or off
 - Play multiple items continuously
 - Pause, resume, skip, stop, reorder, and remove items
 - Choose from voices exposed by the browser/device
-- Change playback speed
+- Change playback speed up to 4×
 - Save the queue locally in the browser
 - Split long text into smaller utterances for more reliable playback
 - Work as a small installable/offline-capable web app where supported
