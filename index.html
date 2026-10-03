@@ -171,9 +171,47 @@
     }
     .settings {
       display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 1fr);
+      gap: 18px;
       margin-top: 18px;
+    }
+    .range-field {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+    .range-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rate-value {
+      font-variant-numeric: tabular-nums;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .rate-slider {
+      width: 100%;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      accent-color: var(--accent);
+      box-shadow: none;
+    }
+    .rate-slider:focus {
+      border: 0;
+      box-shadow: none;
+    }
+    .rate-marks {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+      user-select: none;
     }
     .queue {
       display: grid;
@@ -181,10 +219,14 @@
     }
     .queue-item {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      padding: 15px 0;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      padding: 17px 0;
       border-top: 1px solid var(--line);
+    }
+    .queue-actions {
+      align-self: center;
+      justify-content: flex-end;
     }
     .queue-item:first-child { border-top: 0; }
     .queue-item.active .queue-title::before {
@@ -230,9 +272,21 @@
     }
     @media (max-width: 620px) {
       .shell { width: min(100% - 22px, 900px); padding-top: 24px; }
-      .settings { grid-template-columns: 1fr; }
+      .section { padding: 28px 0; }
+      .player { padding: 18px; }
+      .settings { grid-template-columns: 1fr; gap: 16px; }
       .controls { grid-template-columns: 1fr 52px 52px; }
       .row .btn { flex: 1 1 auto; }
+      .queue-item { grid-template-columns: 1fr; gap: 10px; }
+      .queue-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .queue-actions .btn {
+        min-height: 42px;
+        padding-inline: 13px;
+        flex: 0 0 auto;
+      }
     }
   </style>
 </head>
@@ -286,21 +340,24 @@
           <button class="icon-btn" id="stop" aria-label="停止">■</button>
         </div>
         <div class="settings">
-          <div class="field">
-            <label for="rate">速度</label>
-            <select id="rate">
-              <option value="0.8">0.8×</option>
-              <option value="1">1.0×</option>
-              <option value="1.2">1.2×</option>
-              <option value="1.4" selected>1.4×</option>
-              <option value="1.6">1.6×</option>
-              <option value="1.8">1.8×</option>
-              <option value="2">2.0×</option>
-              <option value="2.5">2.5×</option>
-              <option value="3">3.0×</option>
-              <option value="3.5">3.5×</option>
-              <option value="4">4.0×</option>
-            </select>
+          <div class="range-field">
+            <div class="range-head">
+              <label for="rate">速度</label>
+              <output class="rate-value" id="rate-value" for="rate">1.4×</output>
+            </div>
+            <input
+              class="rate-slider"
+              id="rate"
+              type="range"
+              min="0.8"
+              max="4"
+              step="0.1"
+              value="1.4"
+              aria-label="再生速度"
+            />
+            <div class="rate-marks" aria-hidden="true">
+              <span>0.8×</span><span>1×</span><span>2×</span><span>3×</span><span>4×</span>
+            </div>
           </div>
           <div class="field">
             <label for="voice">音声</label>
@@ -345,6 +402,7 @@
         next: $("next"),
         stop: $("stop"),
         rate: $("rate"),
+        rateValue: $("rate-value"),
         voice: $("voice"),
         nowTitle: $("now-title"),
         status: $("status"),
@@ -457,7 +515,7 @@
               '<h3 class="queue-title">' + escapeHtml(item.title || "Untitled") + '</h3>' +
               '<p class="queue-preview">' + escapeHtml(item.text) + '</p>' +
             '</div>' +
-            '<div class="row">' +
+            '<div class="row queue-actions">' +
               '<button class="btn small" data-action="play" data-index="' + index + '">再生</button>' +
               '<button class="btn small" data-action="up" data-index="' + index + '" aria-label="上へ">↑</button>' +
               '<button class="btn small" data-action="down" data-index="' + index + '" aria-label="下へ">↓</button>' +
@@ -739,7 +797,13 @@
       els.play.addEventListener("click", togglePlay);
       els.next.addEventListener("click", next);
       els.stop.addEventListener("click", stop);
-      els.rate.addEventListener("change", saveSettings);
+      const syncRateDisplay = () => {
+        els.rateValue.value = Number(els.rate.value).toFixed(1) + "×";
+      };
+      els.rate.addEventListener("input", () => {
+        syncRateDisplay();
+        saveSettings();
+      });
       els.voice.addEventListener("change", saveSettings);
       els.autoPaste.addEventListener("change", saveSettings);
       els.clear.addEventListener("click", () => {
@@ -756,9 +820,13 @@
       });
 
       const settings = loadSettings();
-      if (settings.rate && [...els.rate.options].some((o) => o.value === settings.rate)) {
-        els.rate.value = settings.rate;
+      if (settings.rate) {
+        const savedRate = Number(settings.rate);
+        if (Number.isFinite(savedRate) && savedRate >= 0.8 && savedRate <= 4) {
+          els.rate.value = String(savedRate);
+        }
       }
+      syncRateDisplay();
       els.autoPaste.checked = settings.autoPaste !== false;
 
       if (supported) {
