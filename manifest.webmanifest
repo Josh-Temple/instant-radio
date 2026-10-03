@@ -1,0 +1,18 @@
+{
+  "name": "Instant Radio",
+  "short_name": "Instant Radio",
+  "description": "Paste text, press play, and turn information into a personal radio queue using browser text-to-speech.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f1e8",
+  "theme_color": "#f4f1e8",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
