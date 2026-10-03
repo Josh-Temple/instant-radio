@@ -1,5 +1,13 @@
 # Instant Radio
 
+## はじめて見る方へ
+
+文章を貼り付けて連続再生する、小さなブラウザ読み上げアプリの個人実験です。操作の問題設定、キュー・長文分割・端末内保存・PWAの実装を、`index.html`・`sw.js`から確認できます。
+
+**試す方法:** 下記「Run locally」の手順で起動できます。ブラウザ・端末ごとの音声やバックグラウンド動作には差があります。生成AIによる音声生成やサーバー側の文章処理は行っていません。
+
+[全プロジェクトの案内](https://github.com/Josh-Temple)
+
 Paste. Play. Keep moving.
 
 Instant Radio is a deliberately small demo showing how far modern browser text-to-speech can go with almost no infrastructure.
