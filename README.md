@@ -58,6 +58,15 @@ This demo intentionally does not include:
 
 Background playback and available voice quality vary by browser and device.
 
+## Chrome read-aloud experiment
+
+Two pages are included to test Android Chrome's own **Listen to this page / このページを読み上げ** behavior separately from the Web Speech API player:
+
+- `read-aloud-test.html`: fully static, article-like HTML used as the baseline readability test.
+- `reader.html?id=...`: renders one locally stored queue item as a minimal `<article>`. Use the **Chromeで開く** button on a queue item.
+
+The second page is intentionally experimental. Queue text remains in the browser's existing `localStorage`; the app does not upload it. If the static page is eligible for Chrome read-aloud but the queue-backed page is not, that is evidence that Chrome's eligibility/distillation path depends on content available from the served HTML rather than only the post-load DOM.
+
 ## Run locally
 
 No build step is required.
