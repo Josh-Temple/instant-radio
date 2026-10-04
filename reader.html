@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f4f1e8" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Chrome読み上げ用 — Instant Radio</title>
+  <style>
+    :root { color-scheme: light dark; --paper:#f4f1e8; --ink:#132238; --muted:#667085; --line:#d8d2c4; }
+    @media (prefers-color-scheme: dark) { :root { --paper:#111820; --ink:#eef1f5; --muted:#9ba7b5; --line:#2f3a46; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family: Georgia, "Noto Serif JP", "Yu Mincho", serif; }
+    main { width:min(760px, calc(100% - 32px)); margin:0 auto; padding:36px 0 80px; }
+    nav { margin-bottom:40px; font-family:system-ui, sans-serif; font-size:14px; }
+    nav a { color:inherit; }
+    article { font-size:clamp(18px, 2.7vw, 22px); line-height:1.95; }
+    h1 { margin:0 0 12px; font-size:clamp(34px, 7vw, 56px); line-height:1.12; letter-spacing:-.03em; }
+    .meta { margin:0 0 38px; color:var(--muted); font:14px/1.6 system-ui, sans-serif; }
+    p { margin:0 0 1.4em; }
+    .empty { padding:24px 0; border-top:1px solid var(--line); font-family:system-ui, sans-serif; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <nav><a href="./">← Instant Radio に戻る</a></nav>
+    <article itemscope itemtype="https://schema.org/Article">
+      <header>
+        <h1 id="article-title" itemprop="headline">読み上げる文章を準備しています</h1>
+        <p class="meta" id="article-meta">Chrome のメニューから「このページを読み上げ」を試すための実験ページです。</p>
+      </header>
+      <div id="article-body" itemprop="articleBody">
+        <p>Instant Radio のキューから文章を選んで、このページを開いてください。</p>
+      </div>
+    </article>
+  </main>
+  <script>
+    (() => {
+      "use strict";
+      const STORAGE_KEY = "instant-radio-v1";
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+
+      function escapeText(value) {
+        return String(value ?? "");
+      }
+
+      function toParagraphs(text) {
+        const normalized = escapeText(text).replace(/\r/g, "").trim();
+        if (!normalized) return [];
+
+        const blocks = normalized.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+        if (blocks.length > 1) return blocks;
+
+        const lines = normalized.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+        if (lines.length > 1) return lines;
+
+        const sentences = normalized.split(/(?<=[。！？!?])\s*/).map((s) => s.trim()).filter(Boolean);
+        const paragraphs = [];
+        let buffer = "";
+        for (const sentence of sentences) {
+          if (!buffer || (buffer + sentence).length < 260) {
+            buffer += sentence;
+          } else {
+            paragraphs.push(buffer);
+            buffer = sentence;
+          }
+        }
+        if (buffer) paragraphs.push(buffer);
+        return paragraphs.length ? paragraphs : [normalized];
+      }
+
+      let queue = [];
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        if (Array.isArray(parsed)) queue = parsed;
+      } catch {}
+
+      const item = (id && queue.find((entry) => entry && entry.id === id)) || queue[0];
+      const title = document.getElementById("article-title");
+      const meta = document.getElementById("article-meta");
+      const body = document.getElementById("article-body");
+
+      if (!item || !item.text) {
+        title.textContent = "読み上げる文章が見つかりません";
+        meta.textContent = "Instant Radio に戻り、キューの「Chromeで開く」からもう一度試してください。";
+        body.innerHTML = '<p class="empty">このページは同じブラウザ内のキューを読み込みます。別端末やシークレットモードではキューを参照できません。</p>';
+        return;
+      }
+
+      const cleanTitle = (item.title || "Untitled").trim();
+      document.title = cleanTitle + " — Instant Radio";
+      title.textContent = cleanTitle;
+      meta.textContent = item.text.length.toLocaleString("ja-JP") + "文字";
+
+      const paragraphs = toParagraphs(item.text);
+      body.replaceChildren(...paragraphs.map((text) => {
+        const p = document.createElement("p");
+        p.textContent = text;
+        return p;
+      }));
+    })();
+  </script>
+</body>
+</html>

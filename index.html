@@ -113,6 +113,10 @@
     .spacer { flex: 1; }
     .meta { color: var(--muted); font-size: 12px; }
     .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
       border: 1px solid var(--line);
       border-radius: 999px;
       padding: 11px 16px;
@@ -316,6 +320,7 @@
         <button class="btn primary" id="add">キューに追加</button>
         <button class="btn" id="clipboard">クリップボードから貼る</button>
         <button class="btn" id="sample">サンプルを聴く</button>
+        <a class="btn" href="./read-aloud-test.html" target="_blank" rel="noopener">Chrome読み上げテスト</a>
       </div>
       <div class="row" style="margin-top:14px">
         <label class="row" style="gap:8px;font-weight:600">
@@ -324,7 +329,7 @@
         </label>
         <span class="meta">再生中のときは割り込まず、キューに追加します。</span>
       </div>
-      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。</div>
+      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。キューの「Chromeで開く」は、本文を記事ページとして表示し、Chrome自身の「このページを読み上げ」で扱えるか確認する実験機能です。</div>
     </section>
 
     <section class="section" aria-labelledby="player-heading">
@@ -517,6 +522,7 @@
             '</div>' +
             '<div class="row queue-actions">' +
               '<button class="btn small" data-action="play" data-index="' + index + '">再生</button>' +
+              '<button class="btn small" data-action="chrome" data-index="' + index + '">Chromeで開く</button>' +
               '<button class="btn small" data-action="up" data-index="' + index + '" aria-label="上へ">↑</button>' +
               '<button class="btn small" data-action="down" data-index="' + index + '" aria-label="下へ">↓</button>' +
               '<button class="btn small" data-action="remove" data-index="' + index + '">削除</button>' +
@@ -771,8 +777,20 @@
         enqueueText(sample, "Instant Radio を試す", true);
       }
 
+      function openChromeReader(index) {
+        const item = queue[index];
+        if (!item) return;
+        const url = "./reader.html?id=" + encodeURIComponent(item.id);
+        window.open(url, "_blank", "noopener");
+      }
+
       function mutateQueue(action, index) {
         if (Number.isNaN(index) || !queue[index]) return;
+
+        if (action === "chrome") {
+          openChromeReader(index);
+          return;
+        }
 
         if (action === "play") {
           start(index);
