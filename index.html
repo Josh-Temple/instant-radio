@@ -315,7 +315,7 @@
       <div class="row">
         <button class="btn primary" id="add">キューに追加</button>
         <button class="btn" id="clipboard">クリップボードから貼る</button>
-        <button class="btn" id="sample">サンプルを入れる</button>
+        <button class="btn" id="sample">サンプルを聴く</button>
       </div>
       <div class="row" style="margin-top:14px">
         <label class="row" style="gap:8px;font-weight:600">
@@ -324,7 +324,7 @@
         </label>
         <span class="meta">再生中のときは割り込まず、キューに追加します。</span>
       </div>
-      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。</div>
+      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。</div>
     </section>
 
     <section class="section" aria-labelledby="player-heading">
@@ -742,10 +742,33 @@
         }
       }
 
+      function consumeShareTarget() {
+        const params = new URLSearchParams(window.location.search);
+        const sharedTitle = (params.get("title") || "").trim();
+        const sharedText = (params.get("text") || "").trim();
+        const sharedUrl = (params.get("url") || "").trim();
+
+        if (!sharedTitle && !sharedText && !sharedUrl) return;
+
+        if (sharedText) {
+          let text = sharedText;
+          if (sharedUrl && text.endsWith(sharedUrl)) {
+            text = text.slice(0, -sharedUrl.length).trim();
+          }
+          enqueueText(text, sharedTitle, true);
+          els.status.textContent = "共有された文章をキューに追加しました。";
+        } else if (sharedUrl) {
+          els.text.value = sharedUrl;
+          els.count.textContent = sharedUrl.length.toLocaleString("ja-JP") + "文字";
+          els.status.textContent = "URLから本文は取得しません。読みたい本文を選択して共有してください。";
+        }
+
+        history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+      }
+
       function loadSample() {
-        els.title.value = "Instant Radio の使い方";
-        els.text.value = "これは Instant Radio のサンプルです。文章を貼り付け、キューに追加して、再生ボタンを押すだけで音声メディアになります。外部の音声生成APIは使っていません。利用している端末やブラウザに入っている読み上げ機能を、そのまま使っています。複数の文章を追加すると、ラジオのように順番に読み上げます。";
-        els.count.textContent = els.text.value.length.toLocaleString("ja-JP") + "文字";
+        const sample = "Instant Radioは、聴きたい文章を貼るだけで、その場で読み上げる小さなWebアプリです。私はAIで調べた内容を、たとえば「Listenモード用のコンテンツにして」と頼んで聴きやすい文章にし、ここで2倍から4倍くらいで流しています。このアプリ自体も、バイブコーディングで作りました。大がかりなサービスではなく、自分の小さな不便を、その場で使える道具にする。そのくらい気軽に試せる例として公開しています。";
+        enqueueText(sample, "Instant Radio を試す", true);
       }
 
       function mutateQueue(action, index) {
@@ -843,6 +866,7 @@
       });
 
       renderQueue();
+      consumeShareTarget();
     })();
   </script>
 </body>

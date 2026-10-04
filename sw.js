@@ -1,4 +1,4 @@
-const CACHE = "instant-radio-v2";
+const CACHE = "instant-radio-v3";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

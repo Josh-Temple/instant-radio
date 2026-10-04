@@ -27,7 +27,9 @@ There is no voice-generation API, no API key, and no server-side text processing
 ## What it does
 
 - Paste text and start listening immediately
-- Keep pasted text in the queue without interrupting current playback
+- Play a built-in sample with one tap
+- On supported Android/PWA setups, send selected text from the share sheet
+- Keep pasted or shared text in the queue without interrupting current playback
 - Turn automatic paste-to-play on or off
 - Play multiple items continuously
 - Pause, resume, skip, stop, reorder, and remove items
@@ -72,4 +74,4 @@ The repository is designed to work as a static site. GitHub Pages, Vercel, Netli
 
 ## Status
 
-Early public demo. The goal is to test whether the interaction — **paste → play → continuous listening** — is useful enough to keep.
+Early public demo. The goal is to test whether the interaction — **paste/share → play → continuous listening** — is useful enough to keep. The project intentionally stays small: it is also an example of using vibe coding to turn a minor personal inconvenience into a usable tool without building a large product.
