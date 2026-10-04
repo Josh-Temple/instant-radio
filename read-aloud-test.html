@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f4f1e8" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="description" content="Chromeの「このページを読み上げ」対象になるかを確認するための静的記事ページです。" />
+  <title>Chrome 読み上げ判定テスト — Instant Radio</title>
+  <style>
+    :root { color-scheme:light dark; --paper:#f4f1e8; --ink:#132238; --muted:#667085; }
+    @media (prefers-color-scheme:dark) { :root { --paper:#111820; --ink:#eef1f5; --muted:#9ba7b5; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Georgia, "Noto Serif JP", "Yu Mincho", serif; }
+    main { width:min(760px, calc(100% - 32px)); margin:0 auto; padding:36px 0 80px; }
+    nav { margin-bottom:40px; font-family:system-ui, sans-serif; font-size:14px; }
+    nav a { color:inherit; }
+    article { font-size:clamp(18px, 2.7vw, 22px); line-height:1.95; }
+    h1 { margin:0 0 12px; font-size:clamp(34px, 7vw, 56px); line-height:1.12; letter-spacing:-.03em; }
+    .meta { margin:0 0 38px; color:var(--muted); font:14px/1.6 system-ui, sans-serif; }
+    p { margin:0 0 1.4em; }
+  </style>
+</head>
+<body>
+  <main>
+    <nav><a href="./">← Instant Radio に戻る</a></nav>
+    <article itemscope itemtype="https://schema.org/Article">
+      <header>
+        <h1 itemprop="headline">Chrome の読み上げ対象になる記事ページを試す</h1>
+        <p class="meta">Instant Radio / static readability experiment</p>
+      </header>
+      <div itemprop="articleBody">
+        <p>これは、Android版Chromeの「このページを読み上げ」が、どのようなページを読み上げ対象として扱うか確認するための実験ページです。通常のアプリ画面ではなく、見出しと本文を中心にした単純な記事構造にしています。入力欄、プレーヤー、複雑なナビゲーションは置かず、本文はJavaScriptで後から追加せずにHTMLそのものへ記述しています。</p>
+        <p>Instant Radio は、文章を貼り付けて端末の読み上げ機能で聴く小さなWebアプリです。現在の本体は Web Speech API を利用していますが、Android版Chromeにはブラウザ自身の読み上げ機能もあります。Chrome側の読み上げを利用できれば、アプリ側で音声再生を細かく制御しなくても、端末が提供する再生UIやバックグラウンド再生を利用できる可能性があります。</p>
+        <p>ただし、Chromeが任意のWebページを必ず読み上げるわけではありません。ブラウザはページが記事として読めるかを判定しているため、ボタンや入力欄が中心のアプリ画面より、まとまった自然文を含む記事ページの方が対象になりやすいと考えられます。このページでは、その仮説だけを切り分けて確認します。</p>
+        <p>確認するときは、Android版Chromeでこのページを通常のタブとして開き、右上のメニューを表示します。そこで「このページを読み上げ」が利用できるかを見ます。項目が表示され、本文が正しく読み上げられれば、少なくとも静的な記事ページを用意する方法は成立します。逆に、このページでも読み上げ対象にならなければ、HTML構造以外の条件やChrome側の提供条件を追加で調べる必要があります。</p>
+        <p>次の段階では、Instant Radioのキューに保存した文章を別ページの article 要素へ表示する実験を行います。この方式は本文をブラウザ内のlocalStorageから読み込むため、完全な静的HTMLとは条件が異なります。静的ページでは成功し、キュー由来のページでは失敗する場合、Chromeの読み上げ判定がサーバーから取得できるHTMLを重視している可能性を考えられます。</p>
+        <p>この実験の目的は、Chromeの内部仕様を推測だけで決めることではありません。実際のAndroid端末で、条件を一つずつ変えながら挙動を確認することです。まずは最も単純な記事ページを基準にし、その後で動的本文、文章量、見出し、ページ構造などを変えていけば、Instant Radioに取り込める現実的な方法があるか判断できます。</p>
+      </div>
+    </article>
+  </main>
+</body>
+</html>
