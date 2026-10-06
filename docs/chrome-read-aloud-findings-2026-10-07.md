@@ -20,11 +20,11 @@ Web Speech API を使う Instant Radio 本体の読み上げとは別の問題�
 - GitHub 上では両ファイルの blob SHA が同一で、HTML は文字単位で一致している。
 - CSS・JavaScript・データの相対参照先も同一。
 
-この結果から、**URLごとの判定履歴、新規URLの評価タイミング、URLパス固有の評価**が主要候補になっている。
+この観測に加え、現行 Chromium の Android Read Aloud 実装では、URLに対する **page readability request** を行い、返された readability result を利用して機能の可否を判断する経路が確認できた。したがって、少なくとも **URL単位のreadability判定が存在すること**は、単なる推測より強い根拠を持つ。
 
-さらに、半年以上前から存在する Vercel 配信サイトで、Reader Mode は利用できる一方、Read Aloud は利用できない例が複数確認された。このため、**Vercel 配信URLが Read Aloud の判定で不利になる、または別条件で落ちる可能性**も再び有力候補に上がった。
+一方、Google Chrome 本番で使われるサーバー側 readability classifier の具体的な判定基準は公開コードから確認できない。現時点で、Vercel、Search Console、Google Analytics、検索インデックス登録、公開後の特定待機期間が eligibility 条件だと示す一次資料は確認できていない。
 
-ただし、公開後一定時間で必ず利用可能になるという仕様も、Vercel が一律に対象外になるという仕様も確認できていない。現時点では、**URL単位の評価履歴と Vercel 固有要因の両方を並行して検証する**。
+そのため現在は、**URL単位のreadability判定があることは強く支持されるが、判定基準と再評価タイミングは未確定**、という整理を採用する。Vercel 配信との相関は対照実験で継続検証するが、主要因とはまだ扱わない。
 
 ---
 
@@ -210,33 +210,36 @@ CSS、JavaScript、データも同じ相対参照先を利用する。
 - 同一ドメインかどうか
 - GitHub Pagesかどうか
 
-残る主要候補は、
+現在の証拠から優先して検証すべき点は、
 
-1. URLごとの読み上げ可否判定
-2. Chrome / Google 側のURL評価履歴
-3. URLの公開・認識からの経過時間
-4. Vercel 配信URLに固有、または Vercel で起きやすい別条件
-5. URLパスそのものに依存する別条件
+1. URLごとのサーバー側readability判定
+2. 同一コンテンツでもURLが変わると判定結果が変わる条件
+3. readability result が変化する再評価タイミング
+4. ホスティングや配信方式とreadability判定の相関
+5. ページ言語・レンダリング完了時点・その他クライアント側の前提条件
 
 である。
 
-特に 1〜3 は、GitHub Pages の「既存トップ○ / 完全同一の新規URL×」で支持されている。4 は World History Lab / GrokMath の「Reader Mode ○ / Read Aloud ×」という複数の長期運用 Vercel サイトの観測で再浮上した。
+GitHub Pages の「既存トップ○ / 完全同一の新規URL×」は、HTMLだけでなくURL単位の判定が関係するという見立てと整合する。World History Lab / GrokMath の「Reader Mode ○ / Read Aloud ×」は、Reader Mode と Read Aloud を別判定として扱う必要性を支持するが、Vercelそのものを原因とは確定しない。
 
 ---
 
 ## Chrome / Chromium 実装から確認できたこと
 
-公開されている Chromium の Read Aloud 実装では、ページの可読性を URL に対して問い合わせる `isPageReadable(...)` が存在する。
+公開されている Chromium の Android Read Aloud 実装では、ページの可読性を URL に対して問い合わせる `isPageReadable(...)` が存在する。
 
-また、readability 情報を URL ごとに保持するキャッシュ構造がある。
+現行コードから確認できるクライアント側の主な動作は次のとおり。
 
-過去の Chromium 変更では、
+- HTTP(S)など、readability requestを送る前のURL eligibility checkがある
+- URLからユーザー情報を除いた値を使ってreadability requestを送る
+- callbackとして `isReadable` と `timepointsSupported` を受け取る
+- telemetry上も server readability result を別に記録する
+- supported language と feature availability を合わせて実際の可否を決める
+- readability result はクライアント側で一定時間キャッシュされ、現行コードでは約1時間で期限切れになる
 
-- ページ読み込み後に readability check を遅延実行する
-- server readability check / readability request
-- URL単位の readability cache
+過去の Chromium 変更でも、ページ読み込み後に readability check を遅延実行し、server readability check を呼ぶ実装が確認できる。
 
-が確認できる。
+重要なのは、**約1時間という値はクライアントのキャッシュ期間であり、「公開後1時間待てばreadableになる」という意味ではない**こと。サーバー側classifierの再評価周期は公開コードから確認できない。
 
 参考:
 
@@ -263,34 +266,33 @@ Chromium upstream の `ReadAloudReadabilityHooksUpstreamImpl` は空実装であ
 
 成功ページと完全同一HTMLを同一サイト内の別URLへ置いても、新規URLだけ不可だった。
 
-### 有力だが未確定
+### 強く支持されているが内部基準は未確定
 
-**A. 新規URLは、Chrome / Google 側で readable と判定されるまで時間が必要な可能性がある。**
+**A. Read AloudにはURL単位のreadability判定がある。**
 
-ただし、
+Chromiumのクライアント実装がURLに対するreadability request/resultを扱っており、実機でも同一HTMLの別URLで結果が分かれた。
 
-- 必要時間
-- クロールの要否
-- Google Search インデックス登録の要否
-- Search Console の影響
-- ドメイン評価の影響
+ただし、Google Chrome本番のサーバー側classifierが何を見ているかは未公開。
 
-はいずれも未確認。
+### 検証継続
 
-**B. Vercel 配信URLが Read Aloud の判定で不利になる、または別条件で落ちる可能性がある。**
+**B. 新規URLのreadability resultが時間経過で変化する可能性。**
 
-根拠:
+同一HTMLの新規URLが既存URLと異なる結果だったため観測価値はある。ただし、公開後一定時間が必要だという仕様は確認できていない。
 
-- World History Lab: Vercel / Reader Mode ○ / Read Aloud ×
-- GrokMath: Vercel / Reader Mode ○ / Read Aloud ×
-- Instant Radio の Vercel 配信でも Read Aloud ×
-- Vercel 上で Reader Mode が成立する例があるため、「本文抽出できないから Read Aloud も不可」という説明では足りない。
+**C. VercelまたはVercelと相関する配信条件が結果に関係する可能性。**
 
-反証・未確定点:
+World History Lab、GrokMath、Instant RadioのVercel URLではRead Aloud × が観測されているが、GitHub Pagesの新規URLでも×が出ている。Vercelを原因とするには、同一bundleを複数ホストから出す直接比較が必要。
 
-- Vercel 上で Read Aloud ○ の対照例をまだ確認できていない。
-- GitHub Pages でも新規URLは Read Aloud × になったため、Vercel だけで全結果は説明できない。
-- Vercel が一律に対象外だという公開仕様は確認できていない。
+### 現時点で根拠を確認できていない介入
+
+- Search Console登録
+- Google Analytics設定
+- Google Searchへのインデックス登録
+- 特定日数の待機
+- Schema.org追加だけでの改善
+
+これらをRead Aloud改善策として実施する根拠は、今回確認した一次資料からは得られていない。
 
 ### 現時点で弱くなった仮説
 
@@ -364,18 +366,34 @@ Reader Mode の成否だけから Read Aloud の成否を推定しない。
 
 > 単純な反映待ちでは説明できず、URLパス、クロール状態、Google側の別評価条件を調べる。
 
-### B. Vercel 仮説の対照実験
+### B. 同一bundleの GitHub Pages / Vercel 対照実験
 
-次に情報量が大きい実験は、**現在 Read Aloud ○ の Systematic Trading Research トップを、CSS・JavaScript・データを含めて Vercel に複製し、同じURLを数日間固定して観測すること**。
+Systematic Trading Research の既存トップから、HTML・CSS・JavaScript・データを内容変更せず Instant Radio の実験ディレクトリへ複製した。
 
-判定例:
+元の成功対照:
 
-- GitHub Pages 既存トップ ○ / Vercel 完全複製 × が継続  
-  → Vercel 固有要因を強く支持。
-- Vercel 完全複製が時間経過後に ○  
-  → Vercel 一律不可説を弱め、URL評価時間説を強く支持。
-- GitHub Pages 新規完全コピーも Vercel 完全複製も同時期に ○  
-  → URL公開後の認識・評価時間が主要因である可能性が高まる。
+- https://josh-temple.github.io/systematic-trading-research/
+
+新規mirror:
+
+- GitHub Pages: https://josh-temple.github.io/instant-radio/experiments/read-aloud/str-mirror/
+- Vercel: https://instant-radio.vercel.app/experiments/read-aloud/str-mirror/
+
+source blob SHA と実験手順は `experiments/read-aloud/str-mirror/README.md` に固定した。
+
+この2つのmirrorは同じリポジトリ・同じファイル群から配信されるため、両者で結果が継続的に分かれれば hosting / delivery と相関する要因の証拠が強まる。
+
+ただし両mirrorとも新規URLである。そのため両方×の場合は、hosting差ではなくURL単位のreadability判定や別の共通要因でも説明できる。
+
+観測は少なくとも、
+
+- デプロイ確認後
+- 現行クライアントキャッシュ期間を越えた後
+- 24時間後
+- 72時間後
+- 1週間後
+
+に行う。これは「待てば通る」という仮説を前提にするためではなく、readability result が変化するかを観測するための時系列サンプリングである。
 
 ---
 
