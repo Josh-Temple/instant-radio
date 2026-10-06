@@ -60,12 +60,17 @@ Background playback and available voice quality vary by browser and device.
 
 ## Chrome read-aloud experiment
 
-Two pages are included to test Android Chrome's own **Listen to this page / このページを読み上げ** behavior separately from the Web Speech API player:
+Android Chrome's own **Listen to this page / このページを読み上げ** behavior is being tested separately from the Web Speech API player.
 
-- `read-aloud-test.html`: fully static, article-like HTML used as the baseline readability test.
-- `reader.html?id=...`: renders one locally stored queue item as a minimal `<article>`. Use the **Chromeで開く** button on a queue item.
+The current experiment set lives under `experiments/read-aloud/` and includes controlled variants for semantic HTML, `lang`, text length, list-heavy markup, delayed JavaScript insertion, article nesting, metadata, `nopagereadaloud`, and a Cocoon-like article structure.
 
-The second page is intentionally experimental. Queue text remains in the browser's existing `localStorage`; the app does not upload it. If the static page is eligible for Chrome read-aloud but the queue-backed page is not, that is evidence that Chrome's eligibility/distillation path depends on content available from the served HTML rather than only the post-load DOM.
+The strongest result so far is not an HTML difference: on a GitHub Pages site where the existing top page is readable, a **byte-identical copy of that successful page at a newly created URL was not readable**. The original and copy share the same HTML blob, CSS, JavaScript, data references, host, and repository. This makes URL-specific eligibility, evaluation history, or time-to-recognition the leading hypotheses. It does **not** yet prove that waiting alone will make a new URL readable.
+
+Detailed evidence, test URLs, interpretations, and the observation plan are recorded in:
+
+- [Chrome Android read-aloud findings — 2026-10-07](docs/chrome-read-aloud-findings-2026-10-07.md)
+
+The existing `reader.html?id=...` experiment still keeps queue text in the browser's `localStorage`; Instant Radio does not upload that text to an application server.
 
 ## Run locally
 
