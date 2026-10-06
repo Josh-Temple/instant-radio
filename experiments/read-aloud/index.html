@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Chrome読み上げ 制御実験 — Instant Radio</title>
+<style>
+body{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;max-width:980px;margin:auto;padding:24px;line-height:1.65}
+table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #ccc;padding:10px;text-align:left;vertical-align:top}
+select,button{font:inherit;padding:8px}small{color:#667085}code{background:#eee;padding:.15em .35em}
+</style></head><body>
+<h1>Chrome「このページを読み上げ」制御実験</h1>
+<p>同じ端末・同じChrome・同じ通常タブで比較してください。各ページを開いたら最低10秒待ち、右上のメニューを一度閉じて開き直してから判定します。可能なら「リーディングモード」の有無も同時に記録します。</p>
+<p><strong>最重要:</strong> 01を最初に確認してください。01が非表示なら、HTML差分より端末・Chrome・アカウント・機能提供条件の影響を先に疑います。</p>
+<table><thead><tr><th>#</th><th>条件</th><th>このページを読み上げ</th><th>リーディングモード</th></tr></thead><tbody><tr data-id="01">
+<td>01</td><td><a href="./01-baseline.html" target="_blank" rel="noopener">Baseline</a><br><small>静的・長文・semantic HTML・lang=ja</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="02">
+<td>02</td><td><a href="./02-noindex.html" target="_blank" rel="noopener">noindex</a><br><small>Baseline + robots noindex,nofollow</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="03">
+<td>03</td><td><a href="./03-no-lang.html" target="_blank" rel="noopener">langなし</a><br><small>Baselineから html lang=ja だけ削除</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="04">
+<td>04</td><td><a href="./04-div-only.html" target="_blank" rel="noopener">divのみ</a><br><small>同じ長文を article/main/p を使わず div 中心で表示</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="05">
+<td>05</td><td><a href="./05-short.html" target="_blank" rel="noopener">短文</a><br><small>Baselineと同じ構造で本文だけ短縮</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="06">
+<td>06</td><td><a href="./06-list-heavy.html" target="_blank" rel="noopener">リスト中心</a><br><small>同じ長文を段落ではなく li に変換</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="07">
+<td>07</td><td><a href="./07-delayed-js.html" target="_blank" rel="noopener">JS遅延</a><br><small>同じ長文をページ表示5秒後にJavaScriptで挿入</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="08">
+<td>08</td><td><a href="./08-nested-article.html" target="_blank" rel="noopener">article入れ子</a><br><small>同じ長文で article の中に article を入れる</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="09">
+<td>09</td><td><a href="./09-metadata-rich.html" target="_blank" rel="noopener">記事メタデータ</a><br><small>Baseline + Open Graph / JSON-LD / Schema.org</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr>
+<tr data-id="10">
+<td>10</td><td><a href="./10-nopagereadaloud.html" target="_blank" rel="noopener">nopagereadaloud</a><br><small>Baseline + Google公式の読み上げ拒否meta</small></td>
+<td><select data-kind="read"><option value="">未記録</option><option>表示</option><option>非表示</option><option>一瞬表示→消える</option></select></td>
+<td><select data-kind="reader"><option value="">未記録</option><option>利用可</option><option>利用不可</option></select></td>
+</tr></tbody></table>
+<p><button id="copy">結果をコピー</button> <button id="clear">記録を消去</button></p>
+<pre id="out"></pre>
+<script>
+const KEY="instant-radio-read-aloud-experiment-v1";
+const sels=[...document.querySelectorAll("select")];
+let state={};try{state=JSON.parse(localStorage.getItem(KEY)||"{}")}catch{}
+for(const s of sels){const tr=s.closest("tr"),id=tr.dataset.id,k=s.dataset.kind;if(state[id]?.[k])s.value=state[id][k];s.addEventListener("change",()=>{state[id]??={};state[id][k]=s.value;localStorage.setItem(KEY,JSON.stringify(state));render()})}
+function render(){const lines=["Chrome Read Aloud experiment","UA: "+navigator.userAgent,"time: "+new Date().toISOString()];for(const tr of document.querySelectorAll("tbody tr")){const id=tr.dataset.id;const name=tr.querySelector("a").textContent;lines.push(id+" "+name+" | ReadAloud="+(state[id]?.read||"未記録")+" | ReaderMode="+(state[id]?.reader||"未記録"))}document.getElementById("out").textContent=lines.join("\n");return lines.join("\n")}
+document.getElementById("copy").onclick=async()=>{await navigator.clipboard.writeText(render());document.getElementById("copy").textContent="コピーしました";setTimeout(()=>document.getElementById("copy").textContent="結果をコピー",1200)}
+document.getElementById("clear").onclick=()=>{localStorage.removeItem(KEY);location.reload()}
+render();
+</script></body></html>
