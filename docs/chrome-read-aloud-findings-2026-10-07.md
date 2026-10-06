@@ -379,7 +379,9 @@ Systematic Trading Research の既存トップから、HTML・CSS・JavaScript�
 - GitHub Pages: https://josh-temple.github.io/instant-radio/experiments/read-aloud/str-mirror/
 - Vercel: https://instant-radio.vercel.app/experiments/read-aloud/str-mirror/
 
-source blob SHA と実験手順は `experiments/read-aloud/str-mirror/README.md` に固定した。
+source blob SHA と実験手順は `experiments/read-aloud/str-mirror/README.md` に固定した。4ファイルはコピー後にGit blob SHAを再照合し、元ファイルと一致することを確認した。
+
+2026-10-07に両mirror URLが公開取得可能で、取得された主要見出し・説明文も一致することを確認した。**Reader Mode / Read Aloud の実機判定はまだ未実施であり、ここでは公開成功だけを確認済みとする。**
 
 この2つのmirrorは同じリポジトリ・同じファイル群から配信されるため、両者で結果が継続的に分かれれば hosting / delivery と相関する要因の証拠が強まる。
 
