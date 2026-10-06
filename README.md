@@ -64,7 +64,9 @@ Android Chrome's own **Listen to this page / このページを読み上げ** be
 
 The current experiment set lives under `experiments/read-aloud/` and includes controlled variants for semantic HTML, `lang`, text length, list-heavy markup, delayed JavaScript insertion, article nesting, metadata, `nopagereadaloud`, and a Cocoon-like article structure.
 
-The strongest result so far is not an HTML difference: on a GitHub Pages site where the existing top page is readable, a **byte-identical copy of that successful page at a newly created URL was not readable**. The original and copy share the same HTML blob, CSS, JavaScript, data references, host, and repository. This makes URL-specific eligibility, evaluation history, or time-to-recognition the leading hypotheses. It does **not** yet prove that waiting alone will make a new URL readable.
+The strongest result so far is not an HTML difference: on a GitHub Pages site where the existing top page is readable, a **byte-identical copy of that successful page at a newly created URL was not readable**. The original and copy share the same HTML blob, CSS, JavaScript, data references, host, and repository. This makes URL-specific eligibility, evaluation history, or time-to-recognition leading hypotheses.
+
+A second pattern is now also important: two older Vercel-hosted sites, **World History Lab** and **GrokMath**, were usable in Reader Mode but not in Chrome's Read Aloud feature. That keeps a Vercel-specific or Vercel-correlated eligibility condition alive as a separate hypothesis. It does **not** prove that Vercel is categorically unsupported, and it does not replace the URL-history hypothesis because a new GitHub Pages URL also failed.
 
 Detailed evidence, test URLs, interpretations, and the observation plan are recorded in:
 
