@@ -22,7 +22,9 @@ Web Speech API を使う Instant Radio 本体の読み上げとは別の問題�
 
 この結果から、**URLごとの判定履歴、新規URLの評価タイミング、URLパス固有の評価**が主要候補になっている。
 
-ただし、公開後一定時間で必ず利用可能になるという仕様は確認できていないため、**時間経過説は有力仮説であり、未確定**。
+さらに、半年以上前から存在する Vercel 配信サイトで、Reader Mode は利用できる一方、Read Aloud は利用できない例が複数確認された。このため、**Vercel 配信URLが Read Aloud の判定で不利になる、または別条件で落ちる可能性**も再び有力候補に上がった。
+
+ただし、公開後一定時間で必ず利用可能になるという仕様も、Vercel が一律に対象外になるという仕様も確認できていない。現時点では、**URL単位の評価履歴と Vercel 固有要因の両方を並行して検証する**。
 
 ---
 
@@ -168,6 +170,35 @@ CSS、JavaScript、データも同じ相対参照先を利用する。
 - 元URL: ○
 - 新規完全コピーURL: ×
 
+
+### 8. World History Lab / GrokMath の Vercel 観測
+
+既存サイト:
+
+- https://world-history-lab.vercel.app/
+- https://grok-math.vercel.app/
+
+リポジトリ作成時期:
+
+- World History Lab: 2026-02-25
+- GrokMath: 2026-03-04
+
+実機結果:
+
+| サイト | Hosting | Reader Mode | Read Aloud |
+|---|---|---:|---:|
+| World History Lab | Vercel | ○ | × |
+| GrokMath | Vercel | ○ | × |
+
+この観測から分かること:
+
+- Vercel 上でも Chrome は本文を抽出できるため、Reader Mode 自体は成立しうる。
+- それでも Read Aloud は利用不可だった。
+- したがって、**Reader Mode の可否と Read Aloud の可否は別に扱う必要がある**。
+- 両サイトは新規作成直後ではないため、単純な「公開直後だからまだ Read Aloud 不可」という説明だけでは不十分。
+- 一方で、URL単位の評価履歴・クロール状態・サイトごとの条件などは未確認であり、Vercel が原因だと断定はできない。
+
+
 ### この結果が示すこと
 
 以下では説明できない。
@@ -182,11 +213,14 @@ CSS、JavaScript、データも同じ相対参照先を利用する。
 残る主要候補は、
 
 1. URLごとの読み上げ可否判定
-2. URLの公開・認識からの経過時間
-3. Chrome / Google 側のURL評価履歴
-4. URLパスそのものに依存する別条件
+2. Chrome / Google 側のURL評価履歴
+3. URLの公開・認識からの経過時間
+4. Vercel 配信URLに固有、または Vercel で起きやすい別条件
+5. URLパスそのものに依存する別条件
 
 である。
+
+特に 1〜3 は、GitHub Pages の「既存トップ○ / 完全同一の新規URL×」で支持されている。4 は World History Lab / GrokMath の「Reader Mode ○ / Read Aloud ×」という複数の長期運用 Vercel サイトの観測で再浮上した。
 
 ---
 
@@ -231,7 +265,7 @@ Chromium upstream の `ReadAloudReadabilityHooksUpstreamImpl` は空実装であ
 
 ### 有力だが未確定
 
-**新規URLは、Chrome / Google 側で readable と判定されるまで時間が必要な可能性がある。**
+**A. 新規URLは、Chrome / Google 側で readable と判定されるまで時間が必要な可能性がある。**
 
 ただし、
 
@@ -243,10 +277,25 @@ Chromium upstream の `ReadAloudReadabilityHooksUpstreamImpl` は空実装であ
 
 はいずれも未確認。
 
+**B. Vercel 配信URLが Read Aloud の判定で不利になる、または別条件で落ちる可能性がある。**
+
+根拠:
+
+- World History Lab: Vercel / Reader Mode ○ / Read Aloud ×
+- GrokMath: Vercel / Reader Mode ○ / Read Aloud ×
+- Instant Radio の Vercel 配信でも Read Aloud ×
+- Vercel 上で Reader Mode が成立する例があるため、「本文抽出できないから Read Aloud も不可」という説明では足りない。
+
+反証・未確定点:
+
+- Vercel 上で Read Aloud ○ の対照例をまだ確認できていない。
+- GitHub Pages でも新規URLは Read Aloud × になったため、Vercel だけで全結果は説明できない。
+- Vercel が一律に対象外だという公開仕様は確認できていない。
+
 ### 現時点で弱くなった仮説
 
 - GitHub Pages が原因
-- Vercel が原因
+- Vercel だけで全結果を説明できる
 - `article` / `main` がないことが原因
 - `lang` が原因
 - 本文が短いことが原因
@@ -272,9 +321,13 @@ Reader Mode と「このページを読み上げ」は同一機能ではない�
 
 Reader Mode の成否だけから Read Aloud の成否を推定しない。
 
+実際に World History Lab と GrokMath では **Reader Mode ○ / Read Aloud ×** が確認されている。これは両機能が少なくとも実用上は別判定として振る舞うことを示す。
+
 ---
 
 ## 次の観測計画
+
+### A. GitHub Pages の新規URL経過観測
 
 **完全コピーURLは変更しない。**
 
@@ -310,6 +363,19 @@ Reader Mode の成否だけから Read Aloud の成否を推定しない。
 1週間後も × の場合:
 
 > 単純な反映待ちでは説明できず、URLパス、クロール状態、Google側の別評価条件を調べる。
+
+### B. Vercel 仮説の対照実験
+
+次に情報量が大きい実験は、**現在 Read Aloud ○ の Systematic Trading Research トップを、CSS・JavaScript・データを含めて Vercel に複製し、同じURLを数日間固定して観測すること**。
+
+判定例:
+
+- GitHub Pages 既存トップ ○ / Vercel 完全複製 × が継続  
+  → Vercel 固有要因を強く支持。
+- Vercel 完全複製が時間経過後に ○  
+  → Vercel 一律不可説を弱め、URL評価時間説を強く支持。
+- GitHub Pages 新規完全コピーも Vercel 完全複製も同時期に ○  
+  → URL公開後の認識・評価時間が主要因である可能性が高まる。
 
 ---
 
