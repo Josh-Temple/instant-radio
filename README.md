@@ -64,9 +64,9 @@ Android Chrome's own **Listen to this page / このページを読み上げ** be
 
 The current experiment set lives under `experiments/read-aloud/` and includes controlled variants for semantic HTML, `lang`, text length, list-heavy markup, delayed JavaScript insertion, article nesting, metadata, `nopagereadaloud`, and a Cocoon-like article structure.
 
-The strongest result so far is not an HTML difference: on a GitHub Pages site where the existing top page is readable, a **byte-identical copy of that successful page at a newly created URL was not readable**. The original and copy share the same HTML blob, CSS, JavaScript, data references, host, and repository. This makes URL-specific eligibility, evaluation history, or time-to-recognition leading hypotheses.
+The strongest result so far is not an HTML difference: on a GitHub Pages site where the existing top page is readable, a **byte-identical copy of that successful page at a newly created URL was not readable**. Chromium source also shows that Android Read Aloud requests a page-specific readability result for a URL. The Google server-side classifier itself is not public, so its exact criteria and re-evaluation timing remain unknown.
 
-A second pattern is now also important: two older Vercel-hosted sites, **World History Lab** and **GrokMath**, were usable in Reader Mode but not in Chrome's Read Aloud feature. That keeps a Vercel-specific or Vercel-correlated eligibility condition alive as a separate hypothesis. It does **not** prove that Vercel is categorically unsupported, and it does not replace the URL-history hypothesis because a new GitHub Pages URL also failed.
+Older Vercel-hosted **World History Lab** and **GrokMath** pages were usable in Reader Mode but not in Read Aloud. This remains worth testing, but hosting is not treated as the cause. A new controlled mirror now copies the known-readable Systematic Trading Research page bundle into this repository so the same files can be observed on Instant Radio's GitHub Pages and Vercel deployments. No primary evidence found so far makes Search Console, Analytics, indexing, or a fixed multi-day wait a Read Aloud eligibility requirement.
 
 Detailed evidence, test URLs, interpretations, and the observation plan are recorded in:
 
