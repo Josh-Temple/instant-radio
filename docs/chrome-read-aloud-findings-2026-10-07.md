@@ -413,3 +413,83 @@ source blob SHA と実験手順は `experiments/read-aloud/str-mirror/README.md`
 - Chrome標準機能を保証する表現はしない
 
 Chrome側の挙動が明確になるまでは、Instant Radio のプライバシー設計（本文をサーバーへ送らず、端末内で扱う）を崩してまで対応しない。
+
+
+---
+
+## Google Search Console のURL別観測（2026-10-07）
+
+### プロパティと確認方式
+
+- URLプレフィックスプロパティは既存で、Search Console上で選択・閲覧できた。今回、新規プロパティは追加していない。
+- Settings には「Property added to account: October 4, 2026」と表示された。時刻は表示されず、元の作成時刻は不明。2026-10-07 22:25 JST時点で確認した。
+- 所有権確認は「You are a verified owner」、方式は「HTML tag / Successfully verified」と表示された。公開トップページにも既存の google-site-verification meta tag があったため、認証コードは追加していない。
+- main に robots.txt は存在しなかった（GitHub Contents API で 404）。公開中のトップ、Baseline、Cocoon ページでは robots / googlebot meta と noindex は見つからなかった。
+- URLプレフィックスプロパティのOverviewには、最初に「1 indexed page / 0 not indexed pages」と表示された。一方、下記3 URLのURL検査結果はすべて「URL is not on Google」だった。Overviewの集計表示は対象URLの判定として扱わない。
+- Experience欄には「No experience data available yet」と表示され、3 URLのモバイルユーザビリティ判定は確認できなかった。
+- 数値のHTTPステータスコードは、利用できた画面・ツールには表示されなかった。3 URLはブラウザー上で描画され、Search Consoleライブテストではいずれも「Page fetch: Successful」だったが、HTTP 200としては記録しない。
+
+### URL Inspection とライブテスト
+
+URL Inspection（Google Index）の確認時刻は2026-10-07 22:20〜22:23 JST。3 URLとも以下の結果だった。
+
+- 「URL is not on Google」
+- 「Page is not indexed: URL is unknown to Google」
+- Sitemaps: No referring sitemaps detected
+- Referring page: None detected
+- Last crawl / Crawled as / Crawl allowed / Page fetch / Indexing allowed / User-declared canonical / Google-selected canonical: すべて N/A
+
+ライブテストは別に実施した。すべて Google Inspection Tool smartphone で検査され、「Crawl allowed? Yes」「Page fetch: Successful」「Indexing allowed? Yes」だった。
+
+#### A. トップ
+
+URL: https://josh-temple.github.io/instant-radio/
+
+- ライブテスト: 2026-10-07 22:20:59 JST
+- 状態: URL is available to Google; Page can be indexed; URL has no enhancements
+- User-declared canonical: None
+- Google-selected canonical: Only determined after indexing
+- HTML確認: canonical tag なし、robots / googlebot meta なし、noindex なし。既存の所有権確認 meta tag あり。
+
+#### B. Baseline
+
+URL: https://josh-temple.github.io/instant-radio/experiments/read-aloud/01-baseline.html
+
+- ライブテスト: 2026-10-07 22:20:31 JST
+- 状態: URL is available to Google; Page can be indexed; URL has no enhancements
+- User-declared canonical: None
+- Google-selected canonical: Only determined after indexing
+- HTML確認: canonical tag なし、robots / googlebot meta なし、noindex なし。
+
+#### C. Cocoon 構造再現
+
+URL: https://josh-temple.github.io/instant-radio/experiments/read-aloud/11-cocoon-success-structure.html
+
+- ライブテスト: 2026-10-07 22:19:55 JST
+- 状態: URL is available to Google, but has issues; Page can be indexed
+- Crawl allowed: Yes; Page fetch: Successful; Indexing allowed: Yes
+- User-declared canonical: https://instant-radio.vercel.app/experiments/read-aloud/11-cocoon-success-structure.html
+- Google-selected canonical: Only determined after indexing
+- HTML確認: robots / googlebot meta なし、noindex なし。Search ConsoleはBreadcrumbsの invalid item 1件を表示した。canonicalは変更していない。
+
+### インデックス登録リクエスト
+
+未登録で、Search Console上にリクエスト操作が表示されていたため、各URLに1回ずつ送信した。3件とも「Indexing requested」「URL was added to a priority crawl queue」と確認できた。Search ConsoleはURLごとの送信時刻を表示しなかったため、時刻は送信順と画面確認時刻に基づく範囲で記録する。
+
+| 対象 | 結果 | 送信時刻 |
+|---|---|---|
+| トップ | 1回送信、キュー登録を確認 | 2026-10-07 22:21〜22:23 JSTの間 |
+| Baseline | 1回送信、キュー登録を確認 | 2026-10-07 22:21〜22:23 JSTの間 |
+| Cocoon 構造再現 | 1回送信、キュー登録を確認 | 2026-10-07 22:23 JSTごろ |
+
+### 読み上げ調査での扱い
+
+今回のSearch Console登録・URL検査・インデックス登録リクエストは、Google側のURL認識、クロール、インデックス状態と、後日のAndroid Chrome「このページを読み上げ」可否に相関があるかを観測するための記録である。Search Consoleへの登録やリクエストによってRead Aloudが有効になるとは扱わない。
+
+次回のAndroid Chrome実機確認対象:
+
+- https://josh-temple.github.io/instant-radio/
+- https://josh-temple.github.io/instant-radio/experiments/read-aloud/01-baseline.html
+- https://josh-temple.github.io/instant-radio/experiments/read-aloud/11-cocoon-success-structure.html
+
+Read Aloud と Reader Mode は別々に記録し、実機のChromeバージョンと判定日時も残す。Search Consoleの状態が変化した場合は、その状態と実機結果を別々に追記する。
