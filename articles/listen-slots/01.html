@@ -10,7 +10,7 @@
   <meta property="article:published_time" content="2026-10-08T18:00:00+09:00" />
   <link rel="canonical" href="https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html" />
   <title>Chrome読み上げはURLごとに判定されるのか — Instant Radio</title>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Chrome読み上げはURLごとに判定されるのか","description":"Instant Radioの実験から見えてきた、URL単位のreadability判定と固定URL再利用の可能性。","author":{"@type":"Person","name":"Josh Temple"},"datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"ja-JP","articleBody":"読み上げスロット01です。このページは、Android版Chromeの「このページを読み上げ」がURLごとにどのように振る舞うかを確かめるための固定ページです。今後、このURLで読み上げが有効になった場合は、URLを変えずに本文だけを入れ替えて使う候補になります。\\n\\nこれまでの実験で最も強い結果の一つは、Systematic Trading Researchの既存トップページと、そのHTMLを一文字も変えずにコピーした新しいURLで結果が分かれたことです。既存トップでは読み上げが使えた一方、完全同一の新規URLでは使えませんでした。HTML、CSS、JavaScript、データ参照先まで同じなので、ページ内容だけでは説明できません。\\n\\nChromiumの公開コードにも、Read AloudがURLに対してreadability resultを問い合わせる仕組みがあります。Google Chrome本番で使われるサーバー側の具体的な判定基準は公開されていませんが、実機結果とコードの両方は、URL単位の状態が存在するという見方と整合します。\\n\\n一方で、URLが新しければ必ず失敗するわけでも、時間が経てば必ず成功するわけでもありません。同じGitHub Pagesサイトの中でも、トップページは読み上げ可能なのに、リンク先の別ページは読み上げ不可という例が確認されています。したがって、公開からの時間だけを単独の条件として扱うことはできません。\\n\\nそこでInstant Radioでは、新しい文章ごとに新しいURLを作るより、いったん読み上げ可能になった固定URLを保持し、そのURLの本文だけを書き換える方式が有力になっています。実際に、読み上げ可能になった既存のテストURLで本文を書き換えたところ、Chromeは更新後の新しい文章を読み上げました。\\n\\nこの結果が複数の固定URLでも再現するなら、数個の読み上げスロットを用意し、必要な文章を順番に差し替えて使う運用が可能になります。新規URLの判定待ちを避けられるため、Instant Radioを実用的な道具へ近づける重要な一歩になります。"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Chrome読み上げはURLごとに判定されるのか","description":"Instant Radioの実験から見えてきた、URL単位のreadability判定と固定URL再利用の可能性。","author":{"@type":"Person","name":"Josh Temple"},"datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"ja-JP","articleBody":"このページはChromeで聴ける読み物の一つです。このページは、Android版Chromeの「このページを読み上げ」がURLごとにどのように振る舞うかを確かめるための固定ページです。今後、このURLで読み上げが有効になった場合は、URLを変えずに本文だけを入れ替えて使う候補になります。\\n\\nこれまでの実験で最も強い結果の一つは、Systematic Trading Researchの既存トップページと、そのHTMLを一文字も変えずにコピーした新しいURLで結果が分かれたことです。既存トップでは読み上げが使えた一方、完全同一の新規URLでは使えませんでした。HTML、CSS、JavaScript、データ参照先まで同じなので、ページ内容だけでは説明できません。\\n\\nChromiumの公開コードにも、Read AloudがURLに対してreadability resultを問い合わせる仕組みがあります。Google Chrome本番で使われるサーバー側の具体的な判定基準は公開されていませんが、実機結果とコードの両方は、URL単位の状態が存在するという見方と整合します。\\n\\n一方で、URLが新しければ必ず失敗するわけでも、時間が経てば必ず成功するわけでもありません。同じGitHub Pagesサイトの中でも、トップページは読み上げ可能なのに、リンク先の別ページは読み上げ不可という例が確認されています。したがって、公開からの時間だけを単独の条件として扱うことはできません。\\n\\nそこでInstant Radioでは、新しい文章ごとに新しいURLを作るより、いったん読み上げ可能になった固定URLを保持し、そのURLの本文だけを書き換える方式が有力になっています。実際に、読み上げ可能になった既存のテストURLで本文を書き換えたところ、Chromeは更新後の新しい文章を読み上げました。\\n\\nこの結果が複数の固定URLでも再現するなら、数個の読み上げスロットを用意し、必要な文章を順番に差し替えて使う運用が可能になります。新規URLの判定待ちを避けられるため、Instant Radioを実用的な道具へ近づける重要な一歩になります。"}</script>
   <style>
     :root { color-scheme: light dark; --paper:#f4f1e8; --ink:#132238; --muted:#667085; --line:#d8d2c4; }
     @media (prefers-color-scheme:dark) { :root { --paper:#111820; --ink:#eef1f5; --muted:#9ba7b5; --line:#2f3a46; } }
@@ -29,7 +29,7 @@
 </head>
 <body>
   <main>
-    <div class="back"><a href="./index.html">← 読み上げスロット一覧</a></div>
+    <div class="back"><a href="./index.html">← Chromeで聴ける読み物</a></div>
     <article itemscope itemtype="https://schema.org/Article">
       <header>
         <h1 itemprop="headline">Chrome読み上げはURLごとに判定されるのか</h1>
@@ -37,7 +37,7 @@
         <p class="meta"><span itemprop="author">Josh Temple</span> · <time itemprop="datePublished" datetime="2026-10-08">2026年10月8日</time> · Slot 01</p>
       </header>
       <div itemprop="articleBody">
-        <p>読み上げスロット01です。このページは、Android版Chromeの「このページを読み上げ」がURLごとにどのように振る舞うかを確かめるための固定ページです。今後、このURLで読み上げが有効になった場合は、URLを変えずに本文だけを入れ替えて使う候補になります。</p>
+        <p>このページはChromeで聴ける読み物の一つです。このページは、Android版Chromeの「このページを読み上げ」がURLごとにどのように振る舞うかを確かめるための固定ページです。今後、このURLで読み上げが有効になった場合は、URLを変えずに本文だけを入れ替えて使う候補になります。</p>
         <p>これまでの実験で最も強い結果の一つは、Systematic Trading Researchの既存トップページと、そのHTMLを一文字も変えずにコピーした新しいURLで結果が分かれたことです。既存トップでは読み上げが使えた一方、完全同一の新規URLでは使えませんでした。HTML、CSS、JavaScript、データ参照先まで同じなので、ページ内容だけでは説明できません。</p>
         <p>Chromiumの公開コードにも、Read AloudがURLに対してreadability resultを問い合わせる仕組みがあります。Google Chrome本番で使われるサーバー側の具体的な判定基準は公開されていませんが、実機結果とコードの両方は、URL単位の状態が存在するという見方と整合します。</p>
         <p>一方で、URLが新しければ必ず失敗するわけでも、時間が経てば必ず成功するわけでもありません。同じGitHub Pagesサイトの中でも、トップページは読み上げ可能なのに、リンク先の別ページは読み上げ不可という例が確認されています。したがって、公開からの時間だけを単独の条件として扱うことはできません。</p>
