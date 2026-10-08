@@ -397,6 +397,54 @@ Reader Mode の成否だけから Read Aloud の成否を推定しない。
 
 ---
 
+## 2026-10-08 固定URL再利用実験
+
+新しい記事URLを毎回作る方式ではなく、**すでに Read Aloud ○ が確認されている GitHub Pages のトップURLそのものを再利用する**実験を実装した。
+
+対象:
+
+- https://josh-temple.github.io/instant-radio/
+
+実装:
+
+- 入力欄に `Chromeで読む` を追加。
+- キューの既存 `Chromeで開く` も同じ方式へ変更。
+- 新しい記事URL、query string、hash は作らない。
+- 新しいタブはトップURL `/instant-radio/` のまま開く。
+- 対象キューIDのみ browsing-context の `window.name` で引き渡す。
+- 本文は同一originの既存 `localStorage` から取得する。
+- 新しいタブでは通常UIを `<article>` 中心の本文表示へ置き換える。
+- Chrome標準の「このページを読み上げ」の開始操作自体は、ユーザーがChromeメニューから行う。
+- 本文自体は外部サーバーへ送信しない。
+
+実装commit:
+
+- `403a32312dda959e6a1918433249b1a08cdd90ac`
+
+GitHub Pages deployment はこの実装commitで success を確認した。
+
+### 検証したいこと
+
+1. 新しいタブのURLがトップURLのまま維持されるか。
+2. 本文差し替え後も「このページを読み上げ」が表示されるか。
+3. 読み上げ対象が元のトップページではなく、差し替えた本文になるか。
+4. 文章を変えて繰り返しても同じ固定URLで動作するか。
+
+### 判定
+
+**Read Aloud メニュー○ + 差し替え本文を読む**
+
+→ 新規URLのreadability待ちを回避し、Instant Radioで「貼る → 固定URLで表示 → Chrome標準読み上げ」を即時利用できる可能性が高い。
+
+**Read Aloud メニュー○ + 元トップ内容を読む / 再生失敗**
+
+→ eligibility は固定URLで維持できても、再生時の本文抽出がサーバー側または初期文書に依存する可能性が残る。
+
+**本文差し替え後にRead Aloudメニュー自体が×**
+
+→ URLだけでなく現在DOMやページ状態もeligibility再判定に影響する可能性がある。
+
+
 ## 次の観測計画
 
 ### A. GitHub Pages の新規URL経過観測
