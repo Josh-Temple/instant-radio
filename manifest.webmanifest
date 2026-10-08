@@ -1,7 +1,7 @@
 {
   "name": "Instant Radio",
   "short_name": "Instant Radio",
-  "id": "./",
+  "id": "/instant-radio/",
   "description": "Paste text, press play, and turn information into a personal radio queue using browser text-to-speech.",
   "start_url": "./app/",
   "scope": "./app/",
