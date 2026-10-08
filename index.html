@@ -275,6 +275,37 @@
       font-size: 13px;
       line-height: 1.6;
     }
+    .chrome-reader-view {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 4px 0 24px;
+      font-family: Georgia, "Noto Serif JP", "Yu Mincho", serif;
+    }
+    .chrome-reader-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 36px;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .chrome-reader-article {
+      font-size: clamp(18px, 2.7vw, 22px);
+      line-height: 1.95;
+    }
+    .chrome-reader-article h1 {
+      margin: 0 0 12px;
+      font-size: clamp(34px, 7vw, 56px);
+      line-height: 1.12;
+      letter-spacing: -.03em;
+    }
+    .chrome-reader-meta {
+      margin: 0 0 38px;
+      color: var(--muted);
+      font: 14px/1.6 Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .chrome-reader-body p {
+      margin: 0 0 1.4em;
+    }
     @media (max-width: 620px) {
       .shell { width: min(100% - 22px, 900px); padding-top: 24px; }
       .section { padding: 28px 0; }
@@ -319,6 +350,7 @@
       </div>
       <div class="row">
         <button class="btn primary" id="add">キューに追加</button>
+        <button class="btn" id="chrome-read">Chromeで読む</button>
         <button class="btn" id="clipboard">クリップボードから貼る</button>
         <button class="btn" id="sample">サンプルを聴く</button>
         <a class="btn" href="./articles/read-aloud-test-2.html" target="_blank" rel="noopener">Chrome読み上げテスト</a>
@@ -330,7 +362,7 @@
         </label>
         <span class="meta">再生中のときは割り込まず、キューに追加します。</span>
       </div>
-      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。キューの「Chromeで開く」は、本文を記事ページとして表示し、Chrome自身の「このページを読み上げ」で扱えるか確認する実験機能です。</div>
+      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。「Chromeで読む」とキューの「Chromeで開く」は、新しい記事URLを作らず、読み上げ実績のあるこのトップURLを新しいタブで開いたまま本文表示へ切り替える実験機能です。表示後、Chromeのメニューから「このページを読み上げ」を選んでください。</div>
     </section>
 
     <section class="section" aria-labelledby="player-heading">
@@ -393,6 +425,7 @@
 
       const STORAGE_KEY = "instant-radio-v1";
       const SETTINGS_KEY = "instant-radio-settings-v1";
+      const CHROME_READER_WINDOW_PREFIX = "instant-radio-reader-";
       const MAX_CHUNK = 180;
       const $ = (id) => document.getElementById(id);
 
@@ -401,6 +434,7 @@
         text: $("text"),
         count: $("count"),
         add: $("add"),
+        chromeRead: $("chrome-read"),
         clipboard: $("clipboard"),
         sample: $("sample"),
         autoPaste: $("auto-paste"),
@@ -505,6 +539,105 @@
           '"': "&quot;",
           "'": "&#039;"
         }[char]));
+      }
+
+      function chromeReaderItemIdFromWindowName() {
+        if (!window.name.startsWith(CHROME_READER_WINDOW_PREFIX)) return "";
+        return window.name.slice(CHROME_READER_WINDOW_PREFIX.length);
+      }
+
+      function articleParagraphs(text) {
+        const normalized = String(text || "").replace(/\r/g, "").trim();
+        if (!normalized) return [];
+
+        const blocks = normalized.split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);
+        if (blocks.length > 1) return blocks;
+
+        const lines = normalized.split(/\n+/).map((part) => part.trim()).filter(Boolean);
+        if (lines.length > 1) return lines;
+
+        const sentences = normalized
+          .split(/(?<=[。！？!?])\s*/)
+          .map((part) => part.trim())
+          .filter(Boolean);
+
+        const paragraphs = [];
+        let buffer = "";
+        for (const sentence of sentences) {
+          if (!buffer || (buffer + sentence).length < 280) {
+            buffer += sentence;
+          } else {
+            paragraphs.push(buffer);
+            buffer = sentence;
+          }
+        }
+        if (buffer) paragraphs.push(buffer);
+        return paragraphs.length ? paragraphs : [normalized];
+      }
+
+      function renderChromeReaderView(itemId) {
+        const item = queue.find((entry) => entry && entry.id === itemId);
+        const root = document.querySelector("main.shell");
+        if (!root) return false;
+
+        document.body.dataset.chromeReaderView = "true";
+
+        const view = document.createElement("div");
+        view.className = "chrome-reader-view";
+
+        const nav = document.createElement("nav");
+        nav.className = "chrome-reader-nav";
+
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "btn small";
+        back.textContent = "← Instant Radio に戻る";
+        back.addEventListener("click", () => {
+          window.name = "";
+          window.close();
+          window.setTimeout(() => window.location.reload(), 80);
+        });
+        nav.appendChild(back);
+
+        const article = document.createElement("article");
+        article.className = "chrome-reader-article";
+        article.setAttribute("itemscope", "");
+        article.setAttribute("itemtype", "https://schema.org/Article");
+        article.setAttribute("data-clarity-region", "article");
+
+        const header = document.createElement("header");
+        const title = document.createElement("h1");
+        title.setAttribute("itemprop", "headline");
+        const meta = document.createElement("p");
+        meta.className = "chrome-reader-meta";
+
+        const body = document.createElement("div");
+        body.className = "chrome-reader-body";
+        body.setAttribute("itemprop", "articleBody");
+
+        if (!item || !item.text) {
+          title.textContent = "読み上げる文章が見つかりません";
+          meta.textContent = "元のInstant Radioタブから、もう一度「Chromeで読む」を選んでください。";
+          const p = document.createElement("p");
+          p.textContent = "この表示は同じブラウザのキューを利用します。";
+          body.appendChild(p);
+        } else {
+          const cleanTitle = (item.title || "Untitled").trim();
+          document.title = cleanTitle + " — Instant Radio";
+          title.textContent = cleanTitle;
+          meta.textContent = item.text.length.toLocaleString("ja-JP") + "文字 · Chromeメニューから「このページを読み上げ」を選択";
+          for (const paragraph of articleParagraphs(item.text)) {
+            const p = document.createElement("p");
+            p.textContent = paragraph;
+            body.appendChild(p);
+          }
+        }
+
+        header.append(title, meta);
+        article.append(header, body);
+        view.append(nav, article);
+        root.replaceChildren(view);
+        return true;
       }
 
       function renderQueue() {
@@ -696,7 +829,7 @@
 
       function enqueueText(text, explicitTitle = "", autoStart = false) {
         const item = makeQueueItem(text, explicitTitle);
-        if (!item) return;
+        if (!item) return -1;
 
         queue.push(item);
         const newIndex = queue.length - 1;
@@ -708,6 +841,7 @@
         if (autoStart && !playbackActive) {
           start(newIndex);
         }
+        return newIndex;
       }
 
       function addCurrentInput() {
@@ -721,6 +855,22 @@
         els.title.value = "";
         els.text.value = "";
         els.count.textContent = "0文字";
+      }
+
+      function addCurrentInputAndOpenChrome() {
+        const text = els.text.value.trim();
+        if (!text) {
+          els.text.focus();
+          return;
+        }
+
+        const newIndex = enqueueText(text, els.title.value);
+        if (newIndex < 0) return;
+
+        els.title.value = "";
+        els.text.value = "";
+        els.count.textContent = "0文字";
+        openChromeReader(newIndex);
       }
 
       function handlePastedText(text) {
@@ -781,8 +931,12 @@
       function openChromeReader(index) {
         const item = queue[index];
         if (!item) return;
-        const url = "./reader.html?id=" + encodeURIComponent(item.id);
-        window.open(url, "_blank", "noopener");
+
+        const readerWindowName = CHROME_READER_WINDOW_PREFIX + item.id;
+        const readerWindow = window.open("./", readerWindowName);
+        if (!readerWindow) {
+          els.status.textContent = "新しいタブを開けませんでした。ポップアップ設定を確認してください。";
+        }
       }
 
       function mutateQueue(action, index) {
@@ -823,6 +977,12 @@
         renderQueue();
       }
 
+      const chromeReaderItemId = chromeReaderItemIdFromWindowName();
+      if (chromeReaderItemId) {
+        renderChromeReaderView(chromeReaderItemId);
+        return;
+      }
+
       els.text.addEventListener("input", () => {
         els.count.textContent = els.text.value.length.toLocaleString("ja-JP") + "文字";
       });
@@ -834,6 +994,7 @@
         handlePastedText(text);
       });
       els.add.addEventListener("click", addCurrentInput);
+      els.chromeRead.addEventListener("click", addCurrentInputAndOpenChrome);
       els.clipboard.addEventListener("click", pasteClipboard);
       els.sample.addEventListener("click", loadSample);
       els.play.addEventListener("click", togglePlay);
