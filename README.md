@@ -100,7 +100,7 @@ The installable Instant Radio app is intentionally scoped to `/app/`.
 
 The reading library is outside the PWA scope so Android Chrome can show browser UI for those pages. The installed app opens the library in a separate browsing context. The legacy root-scoped service worker is explicitly retired so it no longer controls the reading pages.
 
-The manifest keeps `id: "./"` to preserve the identity of the previously installed app while moving its `start_url` and `scope` to `./app/`.
+The manifest keeps `id: "/instant-radio/"` to preserve the identity of the previously installed app while moving its `start_url` and `scope` to `./app/`.
 
 ## Public reading library
 
