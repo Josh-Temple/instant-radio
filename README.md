@@ -68,11 +68,13 @@ The strongest result so far is not an HTML difference: on a GitHub Pages site wh
 
 A corrected 2026-10-08 follow-up shows a more mixed pattern. Instant Radio's **GitHub Pages top page is readable**, but its linked Chrome read-aloud test page is not. Instant Radio's **Vercel deployment is also not readable**. The byte-identical new copy of the successful Systematic Trading Research top page remains unreadable as well. This keeps URL-specific readability state as the strongest explanation, while leaving a Vercel-specific or Vercel-correlated condition alive as an unresolved hypothesis. Older Vercel-hosted **World History Lab** and **GrokMath** also remain Reader Mode ○ / Read Aloud × examples. Search Console, Analytics, indexing, and fixed waiting periods continue to be treated as observation variables rather than proven eligibility requirements.
 
+A new fixed-URL experiment now tests whether the already-readable GitHub Pages top URL can be reused for freshly pasted text. The **Chromeで読む** action opens the same top URL in a new tab, passes only the queue item ID through the browsing-context name rather than the URL, and replaces the visible main content with an article view from localStorage. No query string, hash, or per-item article URL is created. The user still starts Chrome's native Read Aloud manually from the Chrome menu.
+
 Detailed evidence, test URLs, interpretations, and the observation plan are recorded in:
 
 - [Chrome Android read-aloud findings — 2026-10-07](docs/chrome-read-aloud-findings-2026-10-07.md)
 
-The existing `reader.html?id=...` experiment still keeps queue text in the browser's `localStorage`; Instant Radio does not upload that text to an application server.
+The legacy `reader.html?id=...` experiment is retained for comparison. Queue text remains in the browser's `localStorage`; Instant Radio does not upload that text to an application server.
 
 ## Run locally
 
