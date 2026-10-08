@@ -224,48 +224,61 @@ GitHub Pages の「既存トップ○ / 完全同一の新規URL×」は、HTML�
 
 ---
 
-## 2026-10-08 追跡観測: Instant Radio は○へ変化、STR完全コピーは×のまま
+## 2026-10-08 訂正後の追跡観測
 
-2026-10-08、同じAndroid Chrome実機で追跡確認した。
+2026-10-08、同じAndroid Chrome実機で再確認した。前回「Instant Radio の GitHub Pages版・Vercel版とも Read Aloud ○」と記録したが、これは誤りだったため訂正する。
 
 ### Instant Radio
 
-ユーザー実機で、Instant Radio の以下2つの配信系統について **「このページを読み上げ」利用可（○）** への変化を確認した。
+正しい実機結果は次のとおり。
 
-- GitHub Pages: https://josh-temple.github.io/instant-radio/
-- Vercel: https://instant-radio.vercel.app/
+| URL | Hosting | Read Aloud |
+|---|---|---:|
+| https://josh-temple.github.io/instant-radio/ | GitHub Pages | ○ |
+| https://instant-radio.vercel.app/ | Vercel | × |
+| GitHub Pagesトップからリンクされた Chrome 読み上げテストページ | GitHub Pages | × |
 
-前日の観測では両配信系統で Read Aloud × だったため、**同じ公開サイトが後から Read Aloud ○ へ変化しうる**ことが確認された。
+重要なのは、**GitHub Pages版でもサイト全体が一律に○ではなく、トップページだけが○で、リンク先の読み上げテストページは×**だったことである。
 
-ただし、この観測は「Instant Radio の確認したページが○になった」ことを示すものであり、同サイト内のすべての実験URLが一律に○になったことまでは意味しない。
+したがって、
+
+- GitHub Pagesだから○
+- Vercelだから×
+- 同じサイト内なら一律に同じ結果
+- トップからリンクされれば○
+
+のいずれも、現時点では単純な一般則として扱えない。
 
 ### Systematic Trading Research 完全コピー
 
-一方、次の完全コピーURLは同じ追跡時点でも **Read Aloud × のまま**だった。
+次の完全コピーURLは引き続き **Read Aloud ×**。
 
 - https://josh-temple.github.io/systematic-trading-research/read-aloud-top-copy.html
 
-比較対象の既存トップは引き続き Read Aloud ○。
+比較対象の既存トップは Read Aloud ○。
 
 - https://josh-temple.github.io/systematic-trading-research/
 
-この完全コピーは元トップと Git blob SHA が同一で、HTML・CSS・JavaScript・データ参照条件も同一である。
+完全コピーは元トップと Git blob SHA が同一で、HTML・CSS・JavaScript・データ参照条件も同一である。
 
-### この追跡観測が示すこと
+### この訂正後の観測が示すこと
 
-1. **Vercel 一律不可説は棄却する。**  
-   Instant Radio の Vercel 配信で Read Aloud ○ が確認されたため、Vercel であること自体は Read Aloud 不可の十分条件ではない。
+1. **Vercel 一律不可説はまだ棄却できない。**  
+   ユーザーが確認した Vercel サイトでは、Instant Radio、World History Lab、GrokMath がいずれも Read Aloud ×。現時点で Vercel 上の Read Aloud ○ 対照例は確認できていない。
 
-2. **新規URLは後から○へ変わりうる。**  
-   Instant Radio は前日×から翌日○へ変化した。したがって、URL単位のreadability resultが時間とともに再評価・更新される可能性は実機観測と整合する。
+2. **ただし、Vercelが原因と断定もできない。**  
+   GitHub Pagesでも、新規Baseline、Cocoon構造再現、Systematic Trading Research完全コピー、Instant RadioのChrome読み上げテストページが Read Aloud × である。したがって、Vercel以外のURL単位・ページ単位の条件も明確に存在する。
 
-3. **「一定時間待てば必ず○」ではない。**  
-   Systematic Trading Research の完全コピーは同じ追跡時点で×のままだった。単純な経過時間だけでは全URLの差を説明できない。
+3. **同一サイト内でもURLごとに結果が異なる。**  
+   Instant Radio GitHub Pages版はトップ○ / 読み上げテストページ×。Systematic Trading Researchも既存トップ○ / byte-identical新規コピー×。
 
-4. **Search Console登録は必要条件ではなさそうである。**  
-   GitHub Pages版ではSearch ConsoleのURL検査・インデックス登録リクエストを行った一方、Vercel版も同時期に○へ変化した。したがって、少なくとも「Search Consoleに登録しないとRead Aloudにならない」という説明とは整合しにくい。なお、Search Console操作が全く影響しないことまで証明したわけではない。
+4. **リンクされていることだけでは十分ではない。**  
+   Instant RadioのGitHub PagesトップからリンクされているChrome読み上げテストページが×だったため、内部リンクの存在だけでRead Aloud対象になるとは言えない。
 
-5. 現在の主要論点は、**どの条件でURL単位のserver-side readability resultが変化するか**である。候補には、URLの認識履歴、クロール・取得状況、再評価タイミング、ページ・サイトごとの別条件が残る。
+5. **時間経過だけでも説明できない。**  
+   既存トップが○でも、同一HTMLの新規URLやリンク済みテストページが×のまま残っている。公開後の時間・URL認識履歴は候補だが、「待てば必ず○」とは扱わない。
+
+6. 現在の主要論点は、**URLごとの server-side readability 判定が、どの条件で○になるか**である。候補として、URL評価履歴、クロール・取得状況、サイト/ホスト固有条件、ページ種別、再評価タイミングが残る。
 
 ---
 
@@ -321,21 +334,27 @@ Chromiumのクライアント実装がURLに対するreadability request/result�
 
 ### 検証継続
 
-**B. URL単位のreadability resultは時間経過後に変化しうる。**
+**B. URL単位のreadability resultが時間経過や評価履歴で変化する可能性。**
 
-Instant Radio の GitHub Pages版・Vercel版が、前日の Read Aloud × から翌日の ○ へ変化したため、この現象自体は実機で確認された。
+Instant Radio GitHub Pages版トップは現在 Read Aloud ○ だが、同サイト内の読み上げテストページは×、Systematic Trading Researchのbyte-identical新規コピーも×である。
 
-ただし、Systematic Trading Research の完全コピーURLは同じ追跡時点でも × のままだった。したがって、**時間経過は結果変化の必要十分条件とは確認できず、「一定時間待てば必ず○」とは扱わない。**
+このため、時間経過・URL認識履歴は引き続き候補だが、**「一定時間待てば必ず○」という単純なモデルは支持されない。**
 
-**C. Vercelが一律にRead Aloud対象外という仮説は棄却。**
+**C. VercelまたはVercelと相関する配信条件がRead Aloud判定に関係する可能性。**
 
-Instant Radio の Vercel 配信で Read Aloud ○ が確認されたため、Vercel であること自体を不可理由にはできない。
+現時点でユーザーが確認した Vercel サイトでは、
 
-World History Lab と GrokMath の Vercel 配信では引き続き Reader Mode ○ / Read Aloud × が観測されているため、サイトまたはURLごとの別条件は残る。
+- Instant Radio: ×
+- World History Lab: ×
+- GrokMath: ×
+
+であり、Vercel上の Read Aloud ○ 対照例はまだ確認できていない。
+
+一方、GitHub Pagesにも×のURLが複数存在するため、Vercelだけでは全結果を説明できない。したがって、**Vercel仮説は生きているが未確定**とする。
 
 ### 現時点で根拠を確認できていない介入
 
-- Search Console登録（必要条件説は、Vercel版も○になったことでさらに弱くなった）
+- Search Console登録（GitHub Pagesトップ○とテストページ×が同一サイト内で共存しており、必要条件・十分条件とも確認できない）
 - Google Analytics設定
 - Google Searchへのインデックス登録
 - 特定日数の待機
@@ -343,12 +362,12 @@ World History Lab と GrokMath の Vercel 配信では引き続き Reader Mode �
 
 これらをRead Aloud改善策として実施する根拠は、今回確認した一次資料からは得られていない。
 
-### 現時点で弱くなった / 棄却した仮説
+### 現時点で弱くなった / 支持されない仮説
 
-- GitHub Pages が原因
-- **Vercel でDeployすると Read Aloud 対象にならない** → Instant Radio Vercel版の○確認により棄却
+- GitHub Pages なら一律に Read Aloud ○
+- GitHub Pages が原因で Read Aloud ×
 - Vercel だけで全結果を説明できる
-- **一定時間待てば新規URLは一律に○になる** → STR完全コピーが×のままのため支持されない
+- **一定時間待てば新規URLは一律に○になる** → STR完全コピーやInstant Radio内テストページが×のままのため支持されない
 - `article` / `main` がないことが原因
 - `lang` が原因
 - 本文が短いことが原因
