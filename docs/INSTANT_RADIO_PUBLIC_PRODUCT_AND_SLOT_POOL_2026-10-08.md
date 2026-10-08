@@ -107,7 +107,7 @@ This separates the two listening paths:
 
 Migration safeguards:
 
-- manifest `id` is explicitly `./`, matching the old effective identity derived from the original root `start_url`;
+- manifest `id` is explicitly `/instant-radio/`, matching the old effective identity derived from the original root `start_url`;
 - manifest `start_url` and `scope` now point to `./app/`;
 - share target now points to `./app/`;
 - old root-scope Service Worker and its legacy caches are retired;
