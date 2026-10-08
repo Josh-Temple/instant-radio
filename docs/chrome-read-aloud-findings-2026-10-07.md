@@ -445,6 +445,54 @@ GitHub Pages deployment はこの実装commitで success を確認した。
 → URLだけでなく現在DOMやページ状態もeligibility再判定に影響する可能性がある。
 
 
+## 2026-10-08 固定URL本文書き換え実験
+
+既に Android Chrome の Read Aloud ○ が確認された固定URLについて、**URLを変えず、記事構造をほぼ維持したまま本文だけを書き換える**実験を開始した。
+
+対象URL:
+
+- https://josh-temple.github.io/instant-radio/articles/read-aloud-test-2.html
+
+変更前:
+
+- Git blob SHA: `bcf76df6aa3c0998b5a0d2c19316767dce8fb36f`
+- 実機で Read Aloud ○ を確認済み
+
+変更後:
+
+- Git blob SHA: `11fe66864b6c728008fbc0d46081e2a371222255`
+- commit: `206226752fc8d82c687fd4e5077e4d156d707def`
+- GitHub Pages deployment: success
+- canonical URL: 変更なし
+- 配信元: 変更なし
+- article構造・CSS: 大枠を維持
+- 題名・description・JSON-LD articleBody・可視本文: 新しい実験用内容へ更新
+
+新しい本文の先頭は次の内容で始まる。
+
+> これは固定URL本文更新テストです。
+
+### 検証したいこと
+
+1. 本文更新後も Read Aloud メニューが○のままか。
+2. 実際に読み上げられる内容が新しい本文へ切り替わるか。
+3. 古い本文が読まれる場合、時間経過後に新しい本文へ切り替わるか。
+
+### 判定
+
+**Read Aloud ○ + 「これは固定URL本文更新テストです」から新本文を読む**
+
+→ URLのreadability適格性を維持したまま、現在配信中の本文を読み上げられる可能性を強く支持する。Instant Radioで固定URLを再利用する設計が有力になる。
+
+**Read Aloud ○ + 古い本文を読む**
+
+→ eligibilityだけでなく、読み上げ用本文にも過去の抽出結果・サーバー側キャッシュ等が関係する可能性がある。
+
+**Read Aloud ×へ変化**
+
+→ URLだけでなく、現在の配信本文やページ状態もreadability判定の再評価対象である可能性がある。
+
+
 ## 次の観測計画
 
 ### A. GitHub Pages の新規URL経過観測
