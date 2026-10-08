@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="theme-color" content="#f4f1e8" />
+  <meta name="description" content="Chrome標準読み上げ用の固定URL候補を、読み物として公開しながら育てるInstant Radioの実験ページ。" />
+  <link rel="canonical" href="https://josh-temple.github.io/instant-radio/articles/listen-slots/" />
+  <title>読み上げスロット — Instant Radio</title>
+  <style>
+    :root { color-scheme: light dark; --paper:#f4f1e8; --ink:#132238; --muted:#667085; --line:#d8d2c4; }
+    @media (prefers-color-scheme:dark) { :root { --paper:#111820; --ink:#eef1f5; --muted:#9ba7b5; --line:#2f3a46; } }
+    * { box-sizing:border-box; }
+    body { margin:0; min-width:780px; background:var(--paper); color:var(--ink); font-family:Georgia,"Noto Serif JP","Yu Mincho",serif; }
+    main { width:760px; margin:0 auto; padding:44px 0 96px; }
+    .back { margin:0 0 42px; font:14px/1.5 system-ui,sans-serif; }
+    .back a { color:inherit; }
+    article { font-size:20px; line-height:1.95; }
+    h1 { margin:0 0 14px; font-size:52px; line-height:1.13; letter-spacing:-.035em; }
+    .deck { margin:0 0 10px; font-size:22px; line-height:1.7; }
+    .meta { margin:0 0 42px; color:var(--muted); font:14px/1.6 system-ui,sans-serif; padding-bottom:24px; border-bottom:1px solid var(--line); }
+    p { margin:0 0 1.55em; }
+
+    ul { padding-left:1.2em; }
+    li { margin:0 0 1.1em; font-size:19px; line-height:1.7; }
+    a { color:inherit; }
+    .note { color:var(--muted); font:15px/1.8 system-ui,sans-serif; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="back"><a href="../../">← Instant Radio に戻る</a></div>
+    <article>
+      <header>
+        <h1>読み上げスロット</h1>
+        <p class="deck">Chromeで読み上げ可能になった固定URLを、将来本文を入れ替えて再利用するための候補ページです。</p>
+        <p class="meta">2026年10月8日開始 · 初期6スロット</p>
+      </header>
+      <p>読み上げ対象になるまでの間も公開ページとして楽しめるよう、テーマを一つに統一せず、技術、古典、歴史、科学、随筆、物語を混ぜています。読み上げ可否はAndroid Chrome実機で確認し、○になったURLだけを再利用候補として扱います。</p>
+      <ul>
+        <li><a href="./01.html">01. Chrome読み上げはURLごとに判定されるのか</a><br><span class="note">Instant Radioの実験から見えてきた、URL単位のreadability判定と固定URL再利用の可能性。</span></li>
+        <li><a href="./02.html">02. 古典を読むと、時間の感覚が少し変わる</a><br><span class="note">『枕草子』や『徒然草』の読み方から、古い文章が今も身近に感じられる理由を考える。</span></li>
+        <li><a href="./03.html">03. 都市はなぜ川のそばに生まれたのか</a><br><span class="note">世界史を、王朝名ではなく水・物流・地形から眺める。</span></li>
+        <li><a href="./04.html">04. 夜空の星は、なぜ昔の姿を見せるのか</a><br><span class="note">光の速さから、私たちが見ている宇宙の時間差を考える。</span></li>
+        <li><a href="./05.html">05. 急がない時間をつくる</a><br><span class="note">効率を上げることと、考える余白を残すことは両立できる。</span></li>
+        <li><a href="./06.html">06. 終電のあとにだけ開く図書室</a><br><span class="note">夜の駅に現れる、小さな架空の図書室についての短編。</span></li>
+      </ul>
+      <p class="note">各ページのURLは今後変更しません。本文を差し替える場合もcanonicalは同じURLを維持し、読み上げ結果を記録します。</p>
+    </article>
+  </main>
+</body>
+</html>
