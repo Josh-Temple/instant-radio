@@ -58,6 +58,13 @@ If there is no eligible slot, stop. Do not overwrite an unconfirmed or pinned UR
 
 ## Saved pages
 
+Initial allocation:
+
+- **01–90:** rotating candidates after Read Aloud eligibility is confirmed
+- **91–100:** reserved saved slots; initially `pinned: true` and tagged `保存枠`
+
+The reserved pages keep ordinary seed reading content while their URLs age and accumulate eligibility. When a long-term article is intentionally saved, one of these reserved URLs can be explicitly replaced without entering the automatic rotation.
+
 A long-term saved article should use:
 
 - `pinned: true`
