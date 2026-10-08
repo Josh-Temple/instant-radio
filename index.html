@@ -9,6 +9,15 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
   <title>Instant Radio</title>
+  <script>
+    (() => {
+      const standalone = window.matchMedia?.("(display-mode: standalone)")?.matches || navigator.standalone === true;
+      const rootPath = location.pathname.endsWith("/instant-radio/") || location.pathname.endsWith("/instant-radio/index.html");
+      if (standalone && rootPath) {
+        location.replace("./app/" + location.search + location.hash);
+      }
+    })();
+  </script>
   <style>
     :root {
       color-scheme: light dark;
