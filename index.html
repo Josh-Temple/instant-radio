@@ -350,7 +350,6 @@
       </div>
       <div class="row">
         <button class="btn primary" id="add">キューに追加</button>
-        <button class="btn" id="chrome-read">Chromeで読む</button>
         <button class="btn" id="clipboard">クリップボードから貼る</button>
         <button class="btn" id="sample">サンプルを聴く</button>
         <a class="btn" href="./articles/listen-slots/">Chromeで聴ける読み物</a>
@@ -362,7 +361,7 @@
         </label>
         <span class="meta">再生中のときは割り込まず、キューに追加します。</span>
       </div>
-      <div class="notice">音声は外部AI APIではなく、利用中の端末・ブラウザで使える音声を利用します。文章はこのデモから外部サーバーへ送信しません。PWAとして追加すると、対応するAndroid端末では選択した文章を共有先から送れます。「Chromeで読む」とキューの「Chromeで開く」は、Chromeの「このページを読み上げ」で本文を聴くための実験機能です。あわせて、Chromeでそのまま聴ける読み物も公開しています。</div>
+      <div class="notice">すぐ聴く機能は、利用中の端末・ブラウザで使える音声を利用します。貼り付けた文章はInstant Radioのサーバーへ送信せず、キューはこのブラウザ内に保存します。Chrome標準の「このページを読み上げ」で聴ける公開読み物も別に用意しています。</div>
     </section>
 
     <section class="section" aria-labelledby="player-heading">
@@ -415,7 +414,7 @@
     </section>
 
     <footer>
-      Instant Radio is a small browser experiment: practical text-to-speech with almost no setup. Voice quality and background playback behavior depend on the browser and device.
+      Instant Radio — paste and listen immediately, or browse public readings that work with browser-native speech features.
     </footer>
   </main>
 
@@ -425,7 +424,6 @@
 
       const STORAGE_KEY = "instant-radio-v1";
       const SETTINGS_KEY = "instant-radio-settings-v1";
-      const CHROME_READER_WINDOW_PREFIX = "instant-radio-reader-";
       const MAX_CHUNK = 180;
       const $ = (id) => document.getElementById(id);
 
@@ -434,7 +432,6 @@
         text: $("text"),
         count: $("count"),
         add: $("add"),
-        chromeRead: $("chrome-read"),
         clipboard: $("clipboard"),
         sample: $("sample"),
         autoPaste: $("auto-paste"),
@@ -541,105 +538,6 @@
         }[char]));
       }
 
-      function chromeReaderItemIdFromWindowName() {
-        if (!window.name.startsWith(CHROME_READER_WINDOW_PREFIX)) return "";
-        return window.name.slice(CHROME_READER_WINDOW_PREFIX.length);
-      }
-
-      function articleParagraphs(text) {
-        const normalized = String(text || "").replace(/\r/g, "").trim();
-        if (!normalized) return [];
-
-        const blocks = normalized.split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);
-        if (blocks.length > 1) return blocks;
-
-        const lines = normalized.split(/\n+/).map((part) => part.trim()).filter(Boolean);
-        if (lines.length > 1) return lines;
-
-        const sentences = normalized
-          .split(/(?<=[。！？!?])\s*/)
-          .map((part) => part.trim())
-          .filter(Boolean);
-
-        const paragraphs = [];
-        let buffer = "";
-        for (const sentence of sentences) {
-          if (!buffer || (buffer + sentence).length < 280) {
-            buffer += sentence;
-          } else {
-            paragraphs.push(buffer);
-            buffer = sentence;
-          }
-        }
-        if (buffer) paragraphs.push(buffer);
-        return paragraphs.length ? paragraphs : [normalized];
-      }
-
-      function renderChromeReaderView(itemId) {
-        const item = queue.find((entry) => entry && entry.id === itemId);
-        const root = document.querySelector("main.shell");
-        if (!root) return false;
-
-        document.body.dataset.chromeReaderView = "true";
-
-        const view = document.createElement("div");
-        view.className = "chrome-reader-view";
-
-        const nav = document.createElement("nav");
-        nav.className = "chrome-reader-nav";
-
-        const back = document.createElement("button");
-        back.type = "button";
-        back.className = "btn small";
-        back.textContent = "← Instant Radio に戻る";
-        back.addEventListener("click", () => {
-          window.name = "";
-          window.close();
-          window.setTimeout(() => window.location.reload(), 80);
-        });
-        nav.appendChild(back);
-
-        const article = document.createElement("article");
-        article.className = "chrome-reader-article";
-        article.setAttribute("itemscope", "");
-        article.setAttribute("itemtype", "https://schema.org/Article");
-        article.setAttribute("data-clarity-region", "article");
-
-        const header = document.createElement("header");
-        const title = document.createElement("h1");
-        title.setAttribute("itemprop", "headline");
-        const meta = document.createElement("p");
-        meta.className = "chrome-reader-meta";
-
-        const body = document.createElement("div");
-        body.className = "chrome-reader-body";
-        body.setAttribute("itemprop", "articleBody");
-
-        if (!item || !item.text) {
-          title.textContent = "読み上げる文章が見つかりません";
-          meta.textContent = "元のInstant Radioタブから、もう一度「Chromeで読む」を選んでください。";
-          const p = document.createElement("p");
-          p.textContent = "この表示は同じブラウザのキューを利用します。";
-          body.appendChild(p);
-        } else {
-          const cleanTitle = (item.title || "Untitled").trim();
-          document.title = cleanTitle + " — Instant Radio";
-          title.textContent = cleanTitle;
-          meta.textContent = item.text.length.toLocaleString("ja-JP") + "文字 · Chromeメニューから「このページを読み上げ」を選択";
-          for (const paragraph of articleParagraphs(item.text)) {
-            const p = document.createElement("p");
-            p.textContent = paragraph;
-            body.appendChild(p);
-          }
-        }
-
-        header.append(title, meta);
-        article.append(header, body);
-        view.append(nav, article);
-        root.replaceChildren(view);
-        return true;
-      }
-
       function renderQueue() {
         if (!queue.length) {
           els.queue.innerHTML = '<div class="empty">まだキューは空です。</div>';
@@ -656,7 +554,7 @@
             '</div>' +
             '<div class="row queue-actions">' +
               '<button class="btn small" data-action="play" data-index="' + index + '">再生</button>' +
-              '<button class="btn small" data-action="chrome" data-index="' + index + '">Chromeで開く</button>' +
+
               '<button class="btn small" data-action="up" data-index="' + index + '" aria-label="上へ">↑</button>' +
               '<button class="btn small" data-action="down" data-index="' + index + '" aria-label="下へ">↓</button>' +
               '<button class="btn small" data-action="remove" data-index="' + index + '">削除</button>' +
@@ -857,22 +755,6 @@
         els.count.textContent = "0文字";
       }
 
-      function addCurrentInputAndOpenChrome() {
-        const text = els.text.value.trim();
-        if (!text) {
-          els.text.focus();
-          return;
-        }
-
-        const newIndex = enqueueText(text, els.title.value);
-        if (newIndex < 0) return;
-
-        els.title.value = "";
-        els.text.value = "";
-        els.count.textContent = "0文字";
-        openChromeReader(newIndex);
-      }
-
       function handlePastedText(text) {
         const cleanText = text.trim();
         if (!cleanText) return;
@@ -928,24 +810,8 @@
         enqueueText(sample, "Instant Radio を試す", true);
       }
 
-      function openChromeReader(index) {
-        const item = queue[index];
-        if (!item) return;
-
-        const readerWindowName = CHROME_READER_WINDOW_PREFIX + item.id;
-        const readerWindow = window.open("./", readerWindowName);
-        if (!readerWindow) {
-          els.status.textContent = "新しいタブを開けませんでした。ポップアップ設定を確認してください。";
-        }
-      }
-
       function mutateQueue(action, index) {
         if (Number.isNaN(index) || !queue[index]) return;
-
-        if (action === "chrome") {
-          openChromeReader(index);
-          return;
-        }
 
         if (action === "play") {
           start(index);
@@ -977,12 +843,6 @@
         renderQueue();
       }
 
-      const chromeReaderItemId = chromeReaderItemIdFromWindowName();
-      if (chromeReaderItemId) {
-        renderChromeReaderView(chromeReaderItemId);
-        return;
-      }
-
       els.text.addEventListener("input", () => {
         els.count.textContent = els.text.value.length.toLocaleString("ja-JP") + "文字";
       });
@@ -994,7 +854,6 @@
         handlePastedText(text);
       });
       els.add.addEventListener("click", addCurrentInput);
-      els.chromeRead.addEventListener("click", addCurrentInputAndOpenChrome);
       els.clipboard.addEventListener("click", pasteClipboard);
       els.sample.addEventListener("click", loadSample);
       els.play.addEventListener("click", togglePlay);

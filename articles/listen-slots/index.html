@@ -2,50 +2,142 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#f4f1e8" />
-  <meta name="description" content="Chrome標準読み上げ用の固定URL候補を、読み物として公開しながら育てるInstant Radioの実験ページ。" />
+  <meta name="description" content="Instant Radioで公開している、Chromeの「このページを読み上げ」で聴ける読み物の一覧。" />
   <link rel="canonical" href="https://josh-temple.github.io/instant-radio/articles/listen-slots/" />
   <title>Chromeで聴ける読み物 — Instant Radio</title>
   <style>
-    :root { color-scheme: light dark; --paper:#f4f1e8; --ink:#132238; --muted:#667085; --line:#d8d2c4; }
-    @media (prefers-color-scheme:dark) { :root { --paper:#111820; --ink:#eef1f5; --muted:#9ba7b5; --line:#2f3a46; } }
-    * { box-sizing:border-box; }
-    body { margin:0; min-width:780px; background:var(--paper); color:var(--ink); font-family:Georgia,"Noto Serif JP","Yu Mincho",serif; }
-    main { width:760px; margin:0 auto; padding:44px 0 96px; }
-    .back { margin:0 0 42px; font:14px/1.5 system-ui,sans-serif; }
-    .back a { color:inherit; }
-    article { font-size:20px; line-height:1.95; }
-    h1 { margin:0 0 14px; font-size:52px; line-height:1.13; letter-spacing:-.035em; }
-    .deck { margin:0 0 10px; font-size:22px; line-height:1.7; }
-    .meta { margin:0 0 42px; color:var(--muted); font:14px/1.6 system-ui,sans-serif; padding-bottom:24px; border-bottom:1px solid var(--line); }
-    p { margin:0 0 1.55em; }
-
-    ul { padding-left:1.2em; }
-    li { margin:0 0 1.1em; font-size:19px; line-height:1.7; }
-    a { color:inherit; }
-    .note { color:var(--muted); font:15px/1.8 system-ui,sans-serif; }
+    :root{color-scheme:light dark;--paper:#f4f1e8;--ink:#132238;--muted:#667085;--line:#d8d2c4;--accent:#8c6f56}
+    @media(prefers-color-scheme:dark){:root{--paper:#111820;--ink:#eef1f5;--muted:#9ba7b5;--line:#2f3a46;--accent:#c7a98a}}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Noto Sans JP",sans-serif}
+    main{width:min(900px,calc(100% - 32px));margin:0 auto;padding:42px 0 88px}.back{margin-bottom:38px;font-size:14px}.back a{color:inherit}
+    h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(44px,9vw,76px);line-height:.98;letter-spacing:-.045em}
+    .lead{max-width:700px;margin:18px 0 28px;font-size:18px;line-height:1.75}.note{color:var(--muted);font-size:13px;line-height:1.7}
+    .tools{display:grid;gap:14px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font:inherit}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}.tag{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);padding:7px 11px;font:600 12px/1 system-ui;cursor:pointer}
+    .tag[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    ul{list-style:none;margin:0;padding:0}.item{border-bottom:1px solid var(--line)}.item[hidden]{display:none}
+    .item a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 18px;padding:18px 0;color:inherit;text-decoration:none}
+    .item-title{font-family:Georgia,"Noto Serif JP",serif;font-size:20px;line-height:1.4}.item-meta{align-self:center;color:var(--muted);font-size:12px}
+    .item-summary{grid-column:1/-1;color:var(--muted);font-size:13px;line-height:1.65}.count{padding:15px 0;color:var(--muted);font-size:12px}
   </style>
 </head>
-<body>
-  <main>
-    <div class="back"><a href="../../">← Instant Radio に戻る</a></div>
-    <article>
-      <header>
-        <h1>Chromeで聴ける読み物</h1>
-        <p class="deck">Chromeの「このページを読み上げ」で聴けるように用意した、短い読み物の一覧です。</p>
-        <p class="meta">2026年10月8日開始 · 初期6スロット</p>
-      </header>
-      <p>技術、古典、歴史、科学、随筆、物語など、テーマを限定せずに置いています。気になるものを開き、Chromeのメニューから「このページを読み上げ」を選んでください。</p>
-      <ul>
-        <li><a href="./01.html">01. Chrome読み上げはURLごとに判定されるのか</a><br><span class="note">Instant Radioの実験から見えてきた、URL単位のreadability判定と固定URL再利用の可能性。</span></li>
-        <li><a href="./02.html">02. 古典を読むと、時間の感覚が少し変わる</a><br><span class="note">『枕草子』や『徒然草』の読み方から、古い文章が今も身近に感じられる理由を考える。</span></li>
-        <li><a href="./03.html">03. 都市はなぜ川のそばに生まれたのか</a><br><span class="note">世界史を、王朝名ではなく水・物流・地形から眺める。</span></li>
-        <li><a href="./04.html">04. 夜空の星は、なぜ昔の姿を見せるのか</a><br><span class="note">光の速さから、私たちが見ている宇宙の時間差を考える。</span></li>
-        <li><a href="./05.html">05. 急がない時間をつくる</a><br><span class="note">効率を上げることと、考える余白を残すことは両立できる。</span></li>
-        <li><a href="./06.html">06. 終電のあとにだけ開く図書室</a><br><span class="note">夜の駅に現れる、小さな架空の図書室についての短編。</span></li>
-      </ul>
-      <p class="note">一部のページはChromeの読み上げ対応を確認中です。読み上げメニューが表示されない場合は、別の読み物を試してください。</p>
-    </article>
-  </main>
-</body>
-</html>
+<body><main>
+  <div class="back"><a href="../../">← Instant Radio に戻る</a></div>
+  <h1>Chromeで聴ける読み物</h1>
+  <p class="lead">技術、古典、歴史、科学、随筆、物語などを混ぜた読み物ライブラリです。Chromeではメニューから「このページを読み上げ」を選んで聴けます。</p>
+  <p class="note">このライブラリは100個の固定URLで運用します。保存した記事は残し、それ以外は古いものから新しい読み物へ入れ替えていきます。</p>
+  <div class="tools">
+    <input id="search" type="search" placeholder="タイトルや内容を探す" aria-label="読み物を検索" />
+    <div class="tags"><button class="tag" data-category="" aria-pressed="true">すべて</button><button class="tag" data-category="技術" aria-pressed="false">技術</button><button class="tag" data-category="古典・文学" aria-pressed="false">古典・文学</button><button class="tag" data-category="歴史" aria-pressed="false">歴史</button><button class="tag" data-category="科学" aria-pressed="false">科学</button><button class="tag" data-category="随筆" aria-pressed="false">随筆</button><button class="tag" data-category="物語" aria-pressed="false">物語</button><button class="tag" data-category="技術・AI" aria-pressed="false">技術・AI</button><button class="tag" data-category="社会・制度" aria-pressed="false">社会・制度</button><button class="tag" data-category="仕事・思考" aria-pressed="false">仕事・思考</button><button class="tag" data-category="都市・地理" aria-pressed="false">都市・地理</button></div>
+  </div>
+  <div class="count" id="count">100件</div>
+  <ul id="items"><li class="item" data-title="Chrome読み上げはURLごとに判定されるのか" data-category="技術"><a href="./01.html"><span class="item-title">Chrome読み上げはURLごとに判定されるのか</span><span class="item-meta">技術</span><span class="item-summary">Instant Radioの実験から見えてきた、URL単位のreadability判定と固定URL再利用の可能性。</span></a></li>
+<li class="item" data-title="古典を読むと、時間の感覚が少し変わる" data-category="古典・文学"><a href="./02.html"><span class="item-title">古典を読むと、時間の感覚が少し変わる</span><span class="item-meta">古典・文学</span><span class="item-summary">『枕草子』や『徒然草』の読み方から、古い文章が今も身近に感じられる理由を考える。</span></a></li>
+<li class="item" data-title="都市はなぜ川のそばに生まれたのか" data-category="歴史"><a href="./03.html"><span class="item-title">都市はなぜ川のそばに生まれたのか</span><span class="item-meta">歴史</span><span class="item-summary">世界史を、王朝名ではなく水・物流・地形から眺める。</span></a></li>
+<li class="item" data-title="夜空の星は、なぜ昔の姿を見せるのか" data-category="科学"><a href="./04.html"><span class="item-title">夜空の星は、なぜ昔の姿を見せるのか</span><span class="item-meta">科学</span><span class="item-summary">光の速さから、私たちが見ている宇宙の時間差を考える。</span></a></li>
+<li class="item" data-title="急がない時間をつくる" data-category="随筆"><a href="./05.html"><span class="item-title">急がない時間をつくる</span><span class="item-meta">随筆</span><span class="item-summary">効率を上げることと、考える余白を残すことは両立できる。</span></a></li>
+<li class="item" data-title="終電のあとにだけ開く図書室" data-category="物語"><a href="./06.html"><span class="item-title">終電のあとにだけ開く図書室</span><span class="item-meta">物語</span><span class="item-summary">夜の駅に現れる、小さな架空の図書室についての短編。</span></a></li>
+<li class="item" data-title="竹取物語を「異世界との距離」の話として読む" data-category="古典・文学"><a href="./07.html"><span class="item-title">竹取物語を「異世界との距離」の話として読む</span><span class="item-meta">古典・文学</span><span class="item-summary">かぐや姫の物語を、結末を知っている昔話ではなく、地上と別世界のあいだにある距離の物語として眺める。</span></a></li>
+<li class="item" data-title="方丈記が描いた「変わり続ける都市」" data-category="古典・文学"><a href="./08.html"><span class="item-title">方丈記が描いた「変わり続ける都市」</span><span class="item-meta">古典・文学</span><span class="item-summary">災害と移り変わりの記録から、中世の都市生活と無常観の関係を見る。</span></a></li>
+<li class="item" data-title="平家物語はなぜ声に出すと印象が変わるのか" data-category="古典・文学"><a href="./09.html"><span class="item-title">平家物語はなぜ声に出すと印象が変わるのか</span><span class="item-meta">古典・文学</span><span class="item-summary">語り物として受け継がれた作品を、音とリズムの側から考える。</span></a></li>
+<li class="item" data-title="源氏物語を人間関係の観察記録として見る" data-category="古典・文学"><a href="./10.html"><span class="item-title">源氏物語を人間関係の観察記録として見る</span><span class="item-meta">古典・文学</span><span class="item-summary">華やかな宮廷物語の背後にある、立場と感情のずれを読む。</span></a></li>
+<li class="item" data-title="奥の細道の旅は、移動だけではない" data-category="古典・文学"><a href="./11.html"><span class="item-title">奥の細道の旅は、移動だけではない</span><span class="item-meta">古典・文学</span><span class="item-summary">場所を移ることが記憶や文章の見え方をどう変えるかを考える。</span></a></li>
+<li class="item" data-title="雨月物語の怪異は何を映しているのか" data-category="古典・文学"><a href="./12.html"><span class="item-title">雨月物語の怪異は何を映しているのか</span><span class="item-meta">古典・文学</span><span class="item-summary">怪談の形を借りて、人間の欲望や約束がどう描かれるかを見る。</span></a></li>
+<li class="item" data-title="古事記を物語の構造から眺める" data-category="古典・文学"><a href="./13.html"><span class="item-title">古事記を物語の構造から眺める</span><span class="item-meta">古典・文学</span><span class="item-summary">神話の細部を暗記せず、世界の始まりをどう物語化したかに注目する。</span></a></li>
+<li class="item" data-title="百人一首を一首ずつではなく関係で読む" data-category="古典・文学"><a href="./14.html"><span class="item-title">百人一首を一首ずつではなく関係で読む</span><span class="item-meta">古典・文学</span><span class="item-summary">恋、季節、別れという主題が短い歌の中でどう反復されるかを見る。</span></a></li>
+<li class="item" data-title="夏目漱石の文章はなぜ会話が面白いのか" data-category="古典・文学"><a href="./15.html"><span class="item-title">夏目漱石の文章はなぜ会話が面白いのか</span><span class="item-meta">古典・文学</span><span class="item-summary">人物のずれや皮肉が、会話のテンポによってどう立ち上がるかを考える。</span></a></li>
+<li class="item" data-title="宮沢賢治の物語に科学の言葉が現れる理由" data-category="古典・文学"><a href="./16.html"><span class="item-title">宮沢賢治の物語に科学の言葉が現れる理由</span><span class="item-meta">古典・文学</span><span class="item-summary">幻想と観察が同じ文章の中に共存する面白さを見る。</span></a></li>
+<li class="item" data-title="昔話はなぜ似た形を繰り返すのか" data-category="古典・文学"><a href="./17.html"><span class="item-title">昔話はなぜ似た形を繰り返すのか</span><span class="item-meta">古典・文学</span><span class="item-summary">旅立ち、試練、帰還など、語り継がれやすい構造に注目する。</span></a></li>
+<li class="item" data-title="街道から歴史を見ると何が変わるか" data-category="歴史"><a href="./18.html"><span class="item-title">街道から歴史を見ると何が変わるか</span><span class="item-meta">歴史</span><span class="item-summary">政治の中心だけでなく、人や物が移動した線から歴史を見直す。</span></a></li>
+<li class="item" data-title="港町はなぜ文化の入口になりやすいのか" data-category="歴史"><a href="./19.html"><span class="item-title">港町はなぜ文化の入口になりやすいのか</span><span class="item-meta">歴史</span><span class="item-summary">交易が商品だけでなく言葉や習慣も運ぶ仕組みを考える。</span></a></li>
+<li class="item" data-title="紙の普及は社会をどう変えたのか" data-category="歴史"><a href="./20.html"><span class="item-title">紙の普及は社会をどう変えたのか</span><span class="item-meta">歴史</span><span class="item-summary">記録のコストが下がることが行政、商業、学習へ与える影響を見る。</span></a></li>
+<li class="item" data-title="時計がそろう前、人は時間をどう共有したのか" data-category="歴史"><a href="./21.html"><span class="item-title">時計がそろう前、人は時間をどう共有したのか</span><span class="item-meta">歴史</span><span class="item-summary">標準時以前の生活から、時間を社会で合わせる意味を考える。</span></a></li>
+<li class="item" data-title="印刷技術は知識の広がり方をどう変えたのか" data-category="歴史"><a href="./22.html"><span class="item-title">印刷技術は知識の広がり方をどう変えたのか</span><span class="item-meta">歴史</span><span class="item-summary">複製の速度とコストが情報流通へ与えた影響を見る。</span></a></li>
+<li class="item" data-title="古代ローマの道路は何のためにあったのか" data-category="歴史"><a href="./23.html"><span class="item-title">古代ローマの道路は何のためにあったのか</span><span class="item-meta">歴史</span><span class="item-summary">軍事、行政、交易が同じインフラを共有する構造を見る。</span></a></li>
+<li class="item" data-title="シルクロードを一本の道だと思わない" data-category="歴史"><a href="./24.html"><span class="item-title">シルクロードを一本の道だと思わない</span><span class="item-meta">歴史</span><span class="item-summary">広い交易ネットワークとしてユーラシアのつながりを捉える。</span></a></li>
+<li class="item" data-title="江戸の人口を支えた物流を考える" data-category="歴史"><a href="./25.html"><span class="item-title">江戸の人口を支えた物流を考える</span><span class="item-meta">歴史</span><span class="item-summary">巨大都市の日常を裏側で支えた輸送と市場を見る。</span></a></li>
+<li class="item" data-title="疫病は都市の制度をどう変えてきたのか" data-category="歴史"><a href="./26.html"><span class="item-title">疫病は都市の制度をどう変えてきたのか</span><span class="item-meta">歴史</span><span class="item-summary">病気そのものだけでなく、衛生や行政の仕組みの変化を見る。</span></a></li>
+<li class="item" data-title="国境はいつも同じ場所にあったわけではない" data-category="歴史"><a href="./27.html"><span class="item-title">国境はいつも同じ場所にあったわけではない</span><span class="item-meta">歴史</span><span class="item-summary">地図上の線を固定物と考えず、政治と生活の変化から見る。</span></a></li>
+<li class="item" data-title="歴史資料は誰の視点で残るのか" data-category="歴史"><a href="./28.html"><span class="item-title">歴史資料は誰の視点で残るのか</span><span class="item-meta">歴史</span><span class="item-summary">記録が残ることと、出来事の全体が残ることの違いを考える。</span></a></li>
+<li class="item" data-title="雲はなぜ浮いて見えるのか" data-category="科学"><a href="./29.html"><span class="item-title">雲はなぜ浮いて見えるのか</span><span class="item-meta">科学</span><span class="item-summary">水滴や氷の粒と上昇気流から、雲が空に留まる仕組みを考える。</span></a></li>
+<li class="item" data-title="音は何を運んでいるのか" data-category="科学"><a href="./30.html"><span class="item-title">音は何を運んでいるのか</span><span class="item-meta">科学</span><span class="item-summary">空気の振動が耳まで届く過程から、音の正体を捉える。</span></a></li>
+<li class="item" data-title="氷が水に浮くのは少し特殊なこと" data-category="科学"><a href="./31.html"><span class="item-title">氷が水に浮くのは少し特殊なこと</span><span class="item-meta">科学</span><span class="item-summary">水の密度変化から、身近な物質の不思議を見る。</span></a></li>
+<li class="item" data-title="植物は光をどのように利用しているのか" data-category="科学"><a href="./32.html"><span class="item-title">植物は光をどのように利用しているのか</span><span class="item-meta">科学</span><span class="item-summary">光合成を、光から化学エネルギーへ変える仕組みとして捉える。</span></a></li>
+<li class="item" data-title="季節が生まれる本当の理由" data-category="科学"><a href="./33.html"><span class="item-title">季節が生まれる本当の理由</span><span class="item-meta">科学</span><span class="item-summary">太陽との距離ではなく、地軸の傾きと日射の角度から考える。</span></a></li>
+<li class="item" data-title="潮の満ち引きはなぜ起こるのか" data-category="科学"><a href="./34.html"><span class="item-title">潮の満ち引きはなぜ起こるのか</span><span class="item-meta">科学</span><span class="item-summary">月と太陽の重力が海の動きへ与える影響を見る。</span></a></li>
+<li class="item" data-title="磁石のN極とS極はなぜ分かれないのか" data-category="科学"><a href="./35.html"><span class="item-title">磁石のN極とS極はなぜ分かれないのか</span><span class="item-meta">科学</span><span class="item-summary">磁場の性質を身近な磁石から考える。</span></a></li>
+<li class="item" data-title="細胞はなぜ小さいのか" data-category="科学"><a href="./36.html"><span class="item-title">細胞はなぜ小さいのか</span><span class="item-meta">科学</span><span class="item-summary">表面積と体積の関係から、生物の基本単位の大きさを考える。</span></a></li>
+<li class="item" data-title="火は物質なのか" data-category="科学"><a href="./37.html"><span class="item-title">火は物質なのか</span><span class="item-meta">科学</span><span class="item-summary">燃焼という反応から、炎をどう理解すればよいかを見る。</span></a></li>
+<li class="item" data-title="虹はなぜ同じ順番の色になるのか" data-category="科学"><a href="./38.html"><span class="item-title">虹はなぜ同じ順番の色になるのか</span><span class="item-meta">科学</span><span class="item-summary">光の屈折と分散から、雨上がりの色の並びを説明する。</span></a></li>
+<li class="item" data-title="地震波から地球の内部が分かる理由" data-category="科学"><a href="./39.html"><span class="item-title">地震波から地球の内部が分かる理由</span><span class="item-meta">科学</span><span class="item-summary">直接見られない地球内部を、波の伝わり方から推定する。</span></a></li>
+<li class="item" data-title="検索と生成AIは何が違うのか" data-category="技術・AI"><a href="./40.html"><span class="item-title">検索と生成AIは何が違うのか</span><span class="item-meta">技術・AI</span><span class="item-summary">情報を探すことと、入力から新しい出力を組み立てることの違いを整理する。</span></a></li>
+<li class="item" data-title="APIはなぜソフトウェア同士の境界になるのか" data-category="技術・AI"><a href="./41.html"><span class="item-title">APIはなぜソフトウェア同士の境界になるのか</span><span class="item-meta">技術・AI</span><span class="item-summary">機能を直接触らず、決められた窓口を通して使う設計を考える。</span></a></li>
+<li class="item" data-title="キャッシュはなぜ速さと古さを同時に生むのか" data-category="技術・AI"><a href="./42.html"><span class="item-title">キャッシュはなぜ速さと古さを同時に生むのか</span><span class="item-meta">技術・AI</span><span class="item-summary">一度取得した情報を再利用する仕組みの利点と注意点を見る。</span></a></li>
+<li class="item" data-title="データベースに「正本」を決める意味" data-category="技術・AI"><a href="./43.html"><span class="item-title">データベースに「正本」を決める意味</span><span class="item-meta">技術・AI</span><span class="item-summary">同じ情報が複数あるとき、どれを基準に更新するかを考える。</span></a></li>
+<li class="item" data-title="AIエージェントと普通のチャットは何が違うのか" data-category="技術・AI"><a href="./44.html"><span class="item-title">AIエージェントと普通のチャットは何が違うのか</span><span class="item-meta">技術・AI</span><span class="item-summary">答えるだけでなく、道具を使いながら工程を進める仕組みを整理する。</span></a></li>
+<li class="item" data-title="暗号化とハッシュは同じではない" data-category="技術・AI"><a href="./45.html"><span class="item-title">暗号化とハッシュは同じではない</span><span class="item-meta">技術・AI</span><span class="item-summary">元に戻す必要がある保護と、一方向の要約値の違いを見る。</span></a></li>
+<li class="item" data-title="クラウドは結局どこかのコンピュータで動いている" data-category="技術・AI"><a href="./46.html"><span class="item-title">クラウドは結局どこかのコンピュータで動いている</span><span class="item-meta">技術・AI</span><span class="item-summary">抽象化されたサービスの背後にある物理的な計算資源を意識する。</span></a></li>
+<li class="item" data-title="Gitの履歴はなぜ便利なのか" data-category="技術・AI"><a href="./47.html"><span class="item-title">Gitの履歴はなぜ便利なのか</span><span class="item-meta">技術・AI</span><span class="item-summary">変更を上書きせず、いつ何が変わったかを残す考え方を見る。</span></a></li>
+<li class="item" data-title="ソフトウェアの再試行が危険になるとき" data-category="技術・AI"><a href="./48.html"><span class="item-title">ソフトウェアの再試行が危険になるとき</span><span class="item-meta">技術・AI</span><span class="item-summary">同じ操作を繰り返しても安全であるための設計を考える。</span></a></li>
+<li class="item" data-title="AIの評価は一つの点数では足りない" data-category="技術・AI"><a href="./49.html"><span class="item-title">AIの評価は一つの点数では足りない</span><span class="item-meta">技術・AI</span><span class="item-summary">正しさ、速度、コスト、安全性など複数の軸を分けて見る。</span></a></li>
+<li class="item" data-title="自動化は例外処理から難しくなる" data-category="技術・AI"><a href="./50.html"><span class="item-title">自動化は例外処理から難しくなる</span><span class="item-meta">技術・AI</span><span class="item-summary">通常ケースではなく、失敗時に何をするかが運用の質を決める。</span></a></li>
+<li class="item" data-title="ルールはなぜ例外を持つのか" data-category="社会・制度"><a href="./51.html"><span class="item-title">ルールはなぜ例外を持つのか</span><span class="item-meta">社会・制度</span><span class="item-summary">一般原則だけでは扱えない現実を制度がどう吸収するか考える。</span></a></li>
+<li class="item" data-title="行政手続に記録が多い理由" data-category="社会・制度"><a href="./52.html"><span class="item-title">行政手続に記録が多い理由</span><span class="item-meta">社会・制度</span><span class="item-summary">後から説明できることと、公平に扱うことの関係を見る。</span></a></li>
+<li class="item" data-title="公共サービスで標準化が難しい理由" data-category="社会・制度"><a href="./53.html"><span class="item-title">公共サービスで標準化が難しい理由</span><span class="item-meta">社会・制度</span><span class="item-summary">同じ仕組みに揃える利点と、地域や利用者の違いを両立させる難しさを見る。</span></a></li>
+<li class="item" data-title="統計は平均だけ見ればよいわけではない" data-category="社会・制度"><a href="./54.html"><span class="item-title">統計は平均だけ見ればよいわけではない</span><span class="item-meta">社会・制度</span><span class="item-summary">ばらつきや分布を見ることで、平均に隠れた違いを捉える。</span></a></li>
+<li class="item" data-title="アクセシビリティは特別対応ではない" data-category="社会・制度"><a href="./55.html"><span class="item-title">アクセシビリティは特別対応ではない</span><span class="item-meta">社会・制度</span><span class="item-summary">多様な利用条件を最初から設計へ含める考え方を見る。</span></a></li>
+<li class="item" data-title="調達で仕様を細かくしすぎると何が起きるか" data-category="社会・制度"><a href="./56.html"><span class="item-title">調達で仕様を細かくしすぎると何が起きるか</span><span class="item-meta">社会・制度</span><span class="item-summary">要求を明確にすることと、解決方法を縛りすぎることの境界を考える。</span></a></li>
+<li class="item" data-title="個人情報保護は「集めない」設計から始まる" data-category="社会・制度"><a href="./57.html"><span class="item-title">個人情報保護は「集めない」設計から始まる</span><span class="item-meta">社会・制度</span><span class="item-summary">守るだけでなく、不要な情報を持たない考え方を見る。</span></a></li>
+<li class="item" data-title="制度改正で現場が難しくなる理由" data-category="社会・制度"><a href="./58.html"><span class="item-title">制度改正で現場が難しくなる理由</span><span class="item-meta">社会・制度</span><span class="item-summary">条文の変更と、実際の業務変更の間にある翻訳作業を考える。</span></a></li>
+<li class="item" data-title="監査は失敗探しだけではない" data-category="社会・制度"><a href="./59.html"><span class="item-title">監査は失敗探しだけではない</span><span class="item-meta">社会・制度</span><span class="item-summary">後から再現できる記録を持つことが改善にもつながる理由を見る。</span></a></li>
+<li class="item" data-title="公共データを公開するとき何を考えるか" data-category="社会・制度"><a href="./60.html"><span class="item-title">公共データを公開するとき何を考えるか</span><span class="item-meta">社会・制度</span><span class="item-summary">透明性、再利用、プライバシーのバランスを整理する。</span></a></li>
+<li class="item" data-title="問題と症状を分けて考える" data-category="仕事・思考"><a href="./61.html"><span class="item-title">問題と症状を分けて考える</span><span class="item-meta">仕事・思考</span><span class="item-summary">目の前の困りごとと、その原因を同じものとして扱わない方法を考える。</span></a></li>
+<li class="item" data-title="仮説は当てるためだけにあるのではない" data-category="仕事・思考"><a href="./62.html"><span class="item-title">仮説は当てるためだけにあるのではない</span><span class="item-meta">仕事・思考</span><span class="item-summary">調べる順番を決めるための仮の説明として仮説を見る。</span></a></li>
+<li class="item" data-title="会議の前に決めておくと良いこと" data-category="仕事・思考"><a href="./63.html"><span class="item-title">会議の前に決めておくと良いこと</span><span class="item-meta">仕事・思考</span><span class="item-summary">話題ではなく、最後に何を決めるのかを明確にする。</span></a></li>
+<li class="item" data-title="比較表は項目選びで結論が変わる" data-category="仕事・思考"><a href="./64.html"><span class="item-title">比較表は項目選びで結論が変わる</span><span class="item-meta">仕事・思考</span><span class="item-summary">選択肢より先に、比較軸をどう決めるかを考える。</span></a></li>
+<li class="item" data-title="仕事を引き継ぐときに残すべき情報" data-category="仕事・思考"><a href="./65.html"><span class="item-title">仕事を引き継ぐときに残すべき情報</span><span class="item-meta">仕事・思考</span><span class="item-summary">結果だけでなく、判断理由と未解決事項を残す意味を見る。</span></a></li>
+<li class="item" data-title="チェックリストが効く仕事と効かない仕事" data-category="仕事・思考"><a href="./66.html"><span class="item-title">チェックリストが効く仕事と効かない仕事</span><span class="item-meta">仕事・思考</span><span class="item-summary">繰り返し作業と探索的な仕事で道具を使い分ける。</span></a></li>
+<li class="item" data-title="優先順位は重要度だけでは決まらない" data-category="仕事・思考"><a href="./67.html"><span class="item-title">優先順位は重要度だけでは決まらない</span><span class="item-meta">仕事・思考</span><span class="item-summary">期限、依存関係、効果、コストを合わせて考える。</span></a></li>
+<li class="item" data-title="文章を短くする前に主張を決める" data-category="仕事・思考"><a href="./68.html"><span class="item-title">文章を短くする前に主張を決める</span><span class="item-meta">仕事・思考</span><span class="item-summary">削ることより、何を残すべきかを先に決める。</span></a></li>
+<li class="item" data-title="失敗を再現できる形で記録する" data-category="仕事・思考"><a href="./69.html"><span class="item-title">失敗を再現できる形で記録する</span><span class="item-meta">仕事・思考</span><span class="item-summary">原因調査に必要な時刻、条件、入力、結果の残し方を考える。</span></a></li>
+<li class="item" data-title="自動化する前に手順を整える" data-category="仕事・思考"><a href="./70.html"><span class="item-title">自動化する前に手順を整える</span><span class="item-meta">仕事・思考</span><span class="item-summary">曖昧な業務をそのままコードにすると何が起きるかを見る。</span></a></li>
+<li class="item" data-title="知らない道を一本だけ歩いてみる" data-category="随筆"><a href="./71.html"><span class="item-title">知らない道を一本だけ歩いてみる</span><span class="item-meta">随筆</span><span class="item-summary">日常の移動に小さな違いを入れると、街の見え方がどう変わるか考える。</span></a></li>
+<li class="item" data-title="本棚の並び順にはその人が出る" data-category="随筆"><a href="./72.html"><span class="item-title">本棚の並び順にはその人が出る</span><span class="item-meta">随筆</span><span class="item-summary">分類と偶然が混ざった本棚から、興味の履歴を眺める。</span></a></li>
+<li class="item" data-title="朝の静かな時間にできること" data-category="随筆"><a href="./73.html"><span class="item-title">朝の静かな時間にできること</span><span class="item-meta">随筆</span><span class="item-summary">一日の最初に情報を入れすぎない時間の使い方を考える。</span></a></li>
+<li class="item" data-title="同じ場所を季節ごとに見る" data-category="随筆"><a href="./74.html"><span class="item-title">同じ場所を季節ごとに見る</span><span class="item-meta">随筆</span><span class="item-summary">変化の少ない場所ほど、小さな違いに気づけるという話。</span></a></li>
+<li class="item" data-title="メモは未来の自分への手紙に近い" data-category="随筆"><a href="./75.html"><span class="item-title">メモは未来の自分への手紙に近い</span><span class="item-meta">随筆</span><span class="item-summary">記憶を保存するだけでなく、次の判断を助けるメモを考える。</span></a></li>
+<li class="item" data-title="雨の日の街は音が違う" data-category="随筆"><a href="./76.html"><span class="item-title">雨の日の街は音が違う</span><span class="item-meta">随筆</span><span class="item-summary">視覚だけでなく、足音や車の音から風景を捉える。</span></a></li>
+<li class="item" data-title="小さな道具を長く使う" data-category="随筆"><a href="./77.html"><span class="item-title">小さな道具を長く使う</span><span class="item-meta">随筆</span><span class="item-summary">多機能さではなく、手に馴染むことの価値を考える。</span></a></li>
+<li class="item" data-title="読み返すと文章は別のものになる" data-category="随筆"><a href="./78.html"><span class="item-title">読み返すと文章は別のものになる</span><span class="item-meta">随筆</span><span class="item-summary">同じ文章でも、自分の経験が変わると意味が変わることを見る。</span></a></li>
+<li class="item" data-title="待ち時間を全部埋めなくてもいい" data-category="随筆"><a href="./79.html"><span class="item-title">待ち時間を全部埋めなくてもいい</span><span class="item-meta">随筆</span><span class="item-summary">短い空白を情報で満たさないことの効用を考える。</span></a></li>
+<li class="item" data-title="速く読むことと深く読むこと" data-category="随筆"><a href="./80.html"><span class="item-title">速く読むことと深く読むこと</span><span class="item-meta">随筆</span><span class="item-summary">読む速度を目的に合わせて変えるという当たり前を見直す。</span></a></li>
+<li class="item" data-title="坂の多い街はなぜ道が曲がるのか" data-category="都市・地理"><a href="./81.html"><span class="item-title">坂の多い街はなぜ道が曲がるのか</span><span class="item-meta">都市・地理</span><span class="item-summary">地形が道路や建物の配置に与える影響を見る。</span></a></li>
+<li class="item" data-title="駅前に店が集まるのはなぜか" data-category="都市・地理"><a href="./82.html"><span class="item-title">駅前に店が集まるのはなぜか</span><span class="item-meta">都市・地理</span><span class="item-summary">人の流れと立地の関係から商業集積を考える。</span></a></li>
+<li class="item" data-title="海沿いの街は風景が開いて見える" data-category="都市・地理"><a href="./83.html"><span class="item-title">海沿いの街は風景が開いて見える</span><span class="item-meta">都市・地理</span><span class="item-summary">地形と視界の関係から、場所の印象を考える。</span></a></li>
+<li class="item" data-title="地図の縮尺が変わると見える問題も変わる" data-category="都市・地理"><a href="./84.html"><span class="item-title">地図の縮尺が変わると見える問題も変わる</span><span class="item-meta">都市・地理</span><span class="item-summary">町内と国全体では、同じ現象でも捉え方が変わる。</span></a></li>
+<li class="item" data-title="橋は二つの場所をつなぐだけではない" data-category="都市・地理"><a href="./85.html"><span class="item-title">橋は二つの場所をつなぐだけではない</span><span class="item-meta">都市・地理</span><span class="item-summary">交通、商業、景観の変化を一つの構造物から見る。</span></a></li>
+<li class="item" data-title="住宅地の細い道はどうして残るのか" data-category="都市・地理"><a href="./86.html"><span class="item-title">住宅地の細い道はどうして残るのか</span><span class="item-meta">都市・地理</span><span class="item-summary">土地利用の歴史が現在の道路網に残る理由を考える。</span></a></li>
+<li class="item" data-title="都市の公園は空白ではない" data-category="都市・地理"><a href="./87.html"><span class="item-title">都市の公園は空白ではない</span><span class="item-meta">都市・地理</span><span class="item-summary">休息、防災、環境など複数の役割を持つ空間として見る。</span></a></li>
+<li class="item" data-title="県境を越えると急に景色が変わることがある" data-category="都市・地理"><a href="./88.html"><span class="item-title">県境を越えると急に景色が変わることがある</span><span class="item-meta">都市・地理</span><span class="item-summary">行政境界と地形、土地利用のずれを考える。</span></a></li>
+<li class="item" data-title="地下鉄の路線図は地図ではない" data-category="都市・地理"><a href="./89.html"><span class="item-title">地下鉄の路線図は地図ではない</span><span class="item-meta">都市・地理</span><span class="item-summary">位置の正確さより、関係の分かりやすさを優先する表現を見る。</span></a></li>
+<li class="item" data-title="郊外の景色はなぜ似て見えるのか" data-category="都市・地理"><a href="./90.html"><span class="item-title">郊外の景色はなぜ似て見えるのか</span><span class="item-meta">都市・地理</span><span class="item-summary">道路、商業施設、住宅開発のパターンから考える。</span></a></li>
+<li class="item" data-title="午前四時の自動販売機" data-category="物語"><a href="./91.html"><span class="item-title">午前四時の自動販売機</span><span class="item-meta">物語</span><span class="item-summary">誰もいない道で、一台だけ明るい自動販売機をめぐる短い話。</span></a></li>
+<li class="item" data-title="返却期限のない本" data-category="物語"><a href="./92.html"><span class="item-title">返却期限のない本</span><span class="item-meta">物語</span><span class="item-summary">図書館の棚に一冊だけ、期限の表示がない本が見つかる話。</span></a></li>
+<li class="item" data-title="雨の日だけ止まる時計" data-category="物語"><a href="./93.html"><span class="item-title">雨の日だけ止まる時計</span><span class="item-meta">物語</span><span class="item-summary">晴れの日には正確なのに、雨の日だけ遅れる古い時計の話。</span></a></li>
+<li class="item" data-title="窓の向こうの小さな駅" data-category="物語"><a href="./94.html"><span class="item-title">窓の向こうの小さな駅</span><span class="item-meta">物語</span><span class="item-summary">毎晩同じ時間だけ遠くに見える、時刻表にない駅の話。</span></a></li>
+<li class="item" data-title="宛先のない葉書" data-category="物語"><a href="./95.html"><span class="item-title">宛先のない葉書</span><span class="item-meta">物語</span><span class="item-summary">古道具屋で見つけた、送り先が書かれていない葉書から始まる話。</span></a></li>
+<li class="item" data-title="消えない足跡" data-category="物語"><a href="./96.html"><span class="item-title">消えない足跡</span><span class="item-meta">物語</span><span class="item-summary">雪が溶けても一列だけ残る足跡を追う、小さな冬の物語。</span></a></li>
+<li class="item" data-title="三分だけ未来のラジオ" data-category="物語"><a href="./97.html"><span class="item-title">三分だけ未来のラジオ</span><span class="item-meta">物語</span><span class="item-summary">三分先の放送が聞こえる古いラジオを拾った人の話。</span></a></li>
+<li class="item" data-title="閉店後の喫茶店" data-category="物語"><a href="./98.html"><span class="item-title">閉店後の喫茶店</span><span class="item-meta">物語</span><span class="item-summary">看板を下ろした後に一人だけ客が来る喫茶店の話。</span></a></li>
+<li class="item" data-title="夜明け前の郵便局" data-category="物語"><a href="./99.html"><span class="item-title">夜明け前の郵便局</span><span class="item-meta">物語</span><span class="item-summary">まだ開いていないはずの郵便局で、昔の手紙を渡される話。</span></a></li>
+<li class="item" data-title="忘れ物だけを売る店" data-category="物語"><a href="./100.html"><span class="item-title">忘れ物だけを売る店</span><span class="item-meta">物語</span><span class="item-summary">持ち主の記憶と結びついた忘れ物を並べる、不思議な店の話。</span></a></li></ul>
+  <script>
+    const search=document.querySelector("#search"),buttons=[...document.querySelectorAll(".tag")],items=[...document.querySelectorAll(".item")],count=document.querySelector("#count");
+    let category="";
+    function render(){const q=search.value.trim().toLowerCase();let visible=0;for(const item of items){const okCategory=!category||item.dataset.category===category;const okText=!q||item.textContent.toLowerCase().includes(q);item.hidden=!(okCategory&&okText);if(!item.hidden)visible++;}count.textContent=visible+"件";}
+    search.addEventListener("input",render);for(const b of buttons)b.addEventListener("click",()=>{category=b.dataset.category;for(const x of buttons)x.setAttribute("aria-pressed",x===b?"true":"false");render();});
+  </script>
+</main></body></html>

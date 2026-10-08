@@ -22,7 +22,7 @@ It is a vibe-coded experiment around a simpler observation:
 
 > For many everyday listening use cases, the speech capability already available on a phone or browser is good enough to make useful audio media immediately.
 
-There is no voice-generation API, no API key, and no server-side text processing in the current demo.
+There is no voice-generation API or API key in the paste-and-play path, and pasted queue text remains local to the browser.
 
 ## What it does
 
@@ -90,6 +90,16 @@ Then open `http://localhost:8000`.
 
 The repository is designed to work as a static site. GitHub Pages, Vercel, Netlify, Cloudflare Pages, or any other static host can serve the root directory directly.
 
+## Public reading library
+
+Instant Radio also hosts **100 stable public reading URLs** under `articles/listen-slots/`. They are designed to accumulate Android Chrome Read Aloud eligibility and then be reused without changing their URLs.
+
+Selected pages can be pinned and tagged for long-term preservation. Ordinary confirmed-readable pages form a rotating pool and are reused from the oldest update forward.
+
+The architecture and publication boundary are recorded in:
+
+- [Instant Radio public product and 100-slot Read Aloud pool](docs/INSTANT_RADIO_PUBLIC_PRODUCT_AND_SLOT_POOL_2026-10-08.md)
+
 ## Status
 
-Early public demo. The goal is to test whether the interaction — **paste/share → play → continuous listening** — is useful enough to keep. The project intentionally stays small: it is also an example of using vibe coding to turn a minor personal inconvenience into a usable tool without building a large product.
+Public utility and ongoing browser-read-aloud experiment. The immediate player remains intentionally small; the public reading library is the durable Chrome-native listening path.
