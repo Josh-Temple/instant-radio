@@ -7,7 +7,19 @@
     "strategy": "oldest_confirmed_unpinned",
     "requires_read_aloud_confirmed": true,
     "pinned_never_overwritten": true,
-    "fail_closed_if_no_eligible_slot": true
+    "fail_closed_if_no_eligible_slot": true,
+    "reserved_saved_slots": [
+      "91",
+      "92",
+      "93",
+      "94",
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100"
+    ]
   },
   "slots": [
     {
@@ -1276,9 +1288,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/91.html",
       "title": "午前四時の自動販売機",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1290,9 +1303,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/92.html",
       "title": "返却期限のない本",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1304,9 +1318,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/93.html",
       "title": "雨の日だけ止まる時計",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1318,9 +1333,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/94.html",
       "title": "窓の向こうの小さな駅",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1332,9 +1348,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/95.html",
       "title": "宛先のない葉書",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1346,9 +1363,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/96.html",
       "title": "消えない足跡",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1360,9 +1378,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/97.html",
       "title": "三分だけ未来のラジオ",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1374,9 +1393,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/98.html",
       "title": "閉店後の喫茶店",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1388,9 +1408,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/99.html",
       "title": "夜明け前の郵便局",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
@@ -1402,9 +1423,10 @@
       "public_url": "https://josh-temple.github.io/instant-radio/articles/listen-slots/100.html",
       "title": "忘れ物だけを売る店",
       "tags": [
-        "物語"
+        "物語",
+        "保存枠"
       ],
-      "pinned": false,
+      "pinned": true,
       "read_aloud_status": "not_checked",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
