@@ -1,9 +1,10 @@
 {
   "name": "Instant Radio",
   "short_name": "Instant Radio",
+  "id": "./",
   "description": "Paste text, press play, and turn information into a personal radio queue using browser text-to-speech.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "./app/",
+  "scope": "./app/",
   "display": "standalone",
   "background_color": "#f4f1e8",
   "theme_color": "#f4f1e8",
@@ -16,7 +17,7 @@
     }
   ],
   "share_target": {
-    "action": "./",
+    "action": "./app/",
     "method": "GET",
     "enctype": "application/x-www-form-urlencoded",
     "params": {

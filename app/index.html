@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#f4f1e8" />
   <meta name="description" content="読みたい文章を貼り付けると、そのまま音声で聴ける小さなブラウザアプリです。" />
   <meta name="google-site-verification" content="b9nfpuA9jwHYTec0Rx6jx1EAxkTrDSkCnbPI2Vc4df8" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <link rel="icon" href="../icon.svg" type="image/svg+xml" />
   <title>Instant Radio</title>
   <style>
     :root {
@@ -352,7 +352,7 @@
         <button class="btn primary" id="add">キューに追加</button>
         <button class="btn" id="clipboard">クリップボードから貼る</button>
         <button class="btn" id="sample">サンプルを聴く</button>
-        <a class="btn" href="./articles/listen-slots/">Chromeで聴ける読み物</a>
+        <a class="btn" href="../articles/listen-slots/" target="_blank" rel="noopener">Chromeで聴ける読み物</a>
       </div>
       <div class="row" style="margin-top:14px">
         <label class="row" style="gap:8px;font-weight:600">
@@ -361,7 +361,7 @@
         </label>
         <span class="meta">再生中のときは割り込まず、キューに追加します。</span>
       </div>
-      <div class="notice">すぐ聴く機能は、利用中の端末・ブラウザで使える音声を利用します。貼り付けた文章はInstant Radioのサーバーへ送信せず、キューはこのブラウザ内に保存します。Chrome標準の「このページを読み上げ」で聴ける公開読み物も別に用意しています。</div>
+      <div class="notice">すぐ聴く機能は、利用中の端末・ブラウザで使える音声を利用します。貼り付けた文章はInstant Radioのサーバーへ送信せず、キューはこのブラウザ内に保存します。「Chromeで聴ける読み物」はPWAの外で開き、Chromeのメニューから「このページを読み上げ」を使えます。</div>
     </section>
 
     <section class="section" aria-labelledby="player-heading">
@@ -906,8 +906,7 @@
                 await registration.unregister();
               }
             }
-            const keys = await caches.keys();
-            await Promise.all(keys.filter((key) => /^instant-radio-v\d+$/.test(key)).map((key) => caches.delete(key)));
+            await navigator.serviceWorker.register("./sw.js");
           } catch {}
         });
       }

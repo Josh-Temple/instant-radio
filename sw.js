@@ -1,46 +1,14 @@
-const CACHE = "instant-radio-v4";
-const ASSETS = ["./", "./index.html", "./reader.html", "./read-aloud-test.html", "./manifest.webmanifest", "./icon.svg"];
+const LEGACY_CACHES = ["instant-radio-v1","instant-radio-v2","instant-radio-v3","instant-radio-v4"];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-          return response;
-        })
-        .catch(() =>
-          caches.match(event.request, { ignoreSearch: true })
-            .then((cached) => cached || caches.match("./index.html"))
-        )
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then((cached) =>
-      cached || fetch(event.request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-        return response;
-      })
-    )
+    Promise.all([
+      ...LEGACY_CACHES.map((name) => caches.delete(name)),
+      self.registration.unregister()
+    ])
   );
 });

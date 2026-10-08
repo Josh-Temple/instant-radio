@@ -92,3 +92,25 @@ Observed on Android Chrome:
 Therefore the working design is: **stable public URL + server-visible static article HTML + reuse after eligibility is confirmed**.
 
 The exact Google/Chrome server-side eligibility criteria and timing remain unknown.
+
+
+## PWA boundary
+
+Added 2026-10-08.
+
+The installable app is scoped to `/app/`. Public reading pages remain at their existing `/articles/listen-slots/01.html` ... `100.html` URLs and are deliberately outside the PWA scope.
+
+This separates the two listening paths:
+
+- **PWA / immediate listening:** Web Speech API, local queue, standalone UI.
+- **Public reading pages / Chrome native Read Aloud:** stable server-visible article URLs opened outside the PWA scope so browser UI can appear.
+
+Migration safeguards:
+
+- manifest `id` is explicitly `./`, matching the old effective identity derived from the original root `start_url`;
+- manifest `start_url` and `scope` now point to `./app/`;
+- share target now points to `./app/`;
+- old root-scope Service Worker and its legacy caches are retired;
+- a new Service Worker lives at `/app/sw.js` and cannot control `/articles/`.
+
+The 100 public reading URLs were not renamed or moved during this change.

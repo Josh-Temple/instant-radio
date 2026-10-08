@@ -90,6 +90,18 @@ Then open `http://localhost:8000`.
 
 The repository is designed to work as a static site. GitHub Pages, Vercel, Netlify, Cloudflare Pages, or any other static host can serve the root directory directly.
 
+## PWA scope and Chrome native Read Aloud
+
+The installable Instant Radio app is intentionally scoped to `/app/`.
+
+- Normal web entry: `/`
+- Installed PWA entry: `/app/`
+- Public reading library: `/articles/listen-slots/`
+
+The reading library is outside the PWA scope so Android Chrome can show browser UI for those pages. The installed app opens the library in a separate browsing context. The legacy root-scoped service worker is explicitly retired so it no longer controls the reading pages.
+
+The manifest keeps `id: "./"` to preserve the identity of the previously installed app while moving its `start_url` and `scope` to `./app/`.
+
 ## Public reading library
 
 Instant Radio also hosts **100 stable public reading URLs** under `articles/listen-slots/`. They are designed to accumulate Android Chrome Read Aloud eligibility and then be reused without changing their URLs.
