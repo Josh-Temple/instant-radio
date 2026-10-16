@@ -44,3 +44,35 @@ Do not label the restored URL `confirmed` until this **new** real-device test. D
 ## Separate fallback
 
 Draft PR #16 provides a Web Speech API player; the user reported this player can play audio on Android. It is **not** Chrome native Read Aloud, and fallback success does not resolve native eligibility.
+
+## Restoration re-test: negative (reported 2026-10-17 JST)
+
+After PR #17 (merge commit `1987ea196eacb9cdee12e11cc6265a4912f341ca`) was published via successful GitHub Pages run [38970334755](https://github.com/Josh-Temple/instant-radio/actions/runs/38970334755), the user opened the restored historical article URL in Chrome and reported **「現時点では読み上げ不可」**.
+
+Evidence:
+- Historical blob SHA `11fe66864b6c728008fbc0d46081e2a371222255` matched the restored blob **exactly**.
+- Historic Android test: native Read Aloud worked, including an updated static body while the URL remained available.
+- Present Android test, **after restoring the file at the original path**: native Read Aloud menu **unavailable**.
+
+Inference limited to this experiment:
+- Recreating an identical static HTML file at the former URL is **not sufficient** to restore Chrome-native eligibility immediately.
+- This does **not** establish whether the reason was deletion/republishing, server-side classifier or cache behavior, Chrome version, another state change, or time since last observed success.
+- Do **not** assert that it will become available after a particular number of hours/days. Chromium's local readability-result expiration (around an hour in the inspected source) is not Google server classifier refresh timing.
+- Do **not** mark this URL as current `confirmed`. Keep the 100 rotation slots unchanged (0 currently confirmed, other slots not tested unless there are dated observations).
+
+## Decision and next experiment boundary
+
+Current real-device evidence contains only one **currently positive** URL in Instant Radio: the public root `https://josh-temple.github.io/instant-radio/` (last positively reported 2026-10-16; reconfirm before any modification).
+
+The root is also the existing Instant Radio homepage. The separate PWA application is available under `/app/`; the public library is `/articles/listen-slots/`.
+
+A narrowly controlled future experiment could test **server-visible, static article content at the exact existing root URL**, while linking to the full player at `/app/`. This is motivated by historical evidence that client-side DOM replacement on the readable root did **not** cause Chrome to narrate the substituted text.
+
+**Do not merge or publish such a root rewrite without a separate explicit release decision**. It would modify the only currently readable URL and alter the homepage for visitors. Before any such release:
+1. Save/verify exact existing root source and known-good commit; keep rollback path.
+2. Confirm Chrome-native Read Aloud still available at root immediately before the trial.
+3. Keep original `/app/` available, do not touch PWA/service-worker boundaries or the 100 slots.
+4. Define timeboxed checks: Chrome menu availability, whether it reads the **new server-visible article**, and no regressions to `/app/`.
+5. Roll back if root eligibility disappears or Chrome narrates unintended content; rollback itself cannot guarantee recovery of server-side eligibility.
+
+Until then, no further URL rewrites, canonical manipulations, or invented eligibility requirements are justified by the evidence. The user confirmed the Web Speech fallback from PR #16 can play audio, but that is not native Chrome Read Aloud.
