@@ -31,10 +31,12 @@
         "技術"
       ],
       "pinned": false,
-      "read_aloud_status": "not_checked",
+      "read_aloud_status": "not_readable",
       "created_at": "2026-10-08T21:55:00+09:00",
       "updated_at": "2026-10-08T21:55:00+09:00",
-      "last_replaced_at": null
+      "last_replaced_at": null,
+      "read_aloud_checked_on": "2026-10-16",
+      "reader_mode_status": "not_checked"
     },
     {
       "id": "02",
