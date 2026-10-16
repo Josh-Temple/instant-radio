@@ -18,7 +18,7 @@ Purpose: keep a small pool of stable GitHub Pages URLs that may become eligible 
 
 | Slot | Theme | URL | Published | Read Aloud | Reader Mode | Last content replacement |
 |---|---|---|---|---|---|---|
-| 01 | Chrome読み上げはURLごとに判定されるのか | https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html | 2026-10-08 | NOT_CHECKED | NOT_CHECKED | initial |
+| 01 | Chrome読み上げはURLごとに判定されるのか | https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html | 2026-10-08 | NOT_READABLE (2026-10-16) | NOT_CHECKED | initial |
 | 02 | 古典を読むと、時間の感覚が少し変わる | https://josh-temple.github.io/instant-radio/articles/listen-slots/02.html | 2026-10-08 | NOT_CHECKED | NOT_CHECKED | initial |
 | 03 | 都市はなぜ川のそばに生まれたのか | https://josh-temple.github.io/instant-radio/articles/listen-slots/03.html | 2026-10-08 | NOT_CHECKED | NOT_CHECKED | initial |
 | 04 | 夜空の星は、なぜ昔の姿を見せるのか | https://josh-temple.github.io/instant-radio/articles/listen-slots/04.html | 2026-10-08 | NOT_CHECKED | NOT_CHECKED | initial |
@@ -30,3 +30,15 @@ Purpose: keep a small pool of stable GitHub Pages URLs that may become eligible 
 - `/articles/read-aloud-test-2.html`
   - Read Aloud: confirmed ○ after content replacement on 2026-10-08.
   - This is the strongest evidence so far that a readable fixed URL can keep its eligibility while serving newly updated static article text.
+
+## Android Chrome comparison — 2026-10-16
+
+User tested both links in Android Chrome after checking the setting "検索とブラウジングを改善する":
+
+- Instant Radio GitHub Pages top `https://josh-temple.github.io/instant-radio/`: Chrome native Read Aloud **available**.
+- Fixed public slot `https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html`: Chrome native Read Aloud **unavailable**.
+- Reader Mode for both URLs **not checked** in this comparison. Chrome version and exact time not captured.
+
+`not_readable` is a **dated observation**, not a permanent classification. Only real-device `confirmed` qualifies a slot for content rotation. The other 99 slots remain `not_checked`.
+
+Chrome native Read Aloud eligibility is outside the site's direct control. Do not change any of the 100 fixed article URLs, canonical URLs, or article HTML for this observation. The separate `player.html?slot=XX` page offers browser/device Web Speech API audio without altering the article URL or claiming native Chrome eligibility. Audio on Android must still be tested on-device; background playback is not guaranteed.

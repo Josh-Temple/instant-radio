@@ -1,0 +1,23 @@
+name: Verify fixed-URL speech fallback
+
+on:
+  pull_request:
+    paths:
+      - "articles/listen-slots/**"
+      - "tests/slot-fallback.test.mjs"
+      - ".github/workflows/verify-slot-fallback.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check fixed URLs, article text, and speech player
+        run: node --test tests/slot-fallback.test.mjs

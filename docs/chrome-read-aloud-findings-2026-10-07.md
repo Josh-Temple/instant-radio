@@ -659,3 +659,35 @@ URL: https://josh-temple.github.io/instant-radio/experiments/read-aloud/11-cocoo
 - https://josh-temple.github.io/instant-radio/experiments/read-aloud/11-cocoon-success-structure.html
 
 Read Aloud と Reader Mode は別々に記録し、実機のChromeバージョンと判定日時も残す。Search Consoleの状態が変化した場合は、その状態と実機結果を別々に追記する。
+
+---
+
+## 2026-10-16 実機での再比較：成功トップと失敗スロット
+
+ユーザーから、Android Chrome で「検索とブラウジングを改善する」を確認した上で、次の比較結果が報告された。
+
+| URL | Chrome標準「このページを読み上げ」 | Reader Mode |
+|---|---|---|
+| `https://josh-temple.github.io/instant-radio/` | 表示される | 未確認 |
+| `https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html` | 表示されない | 未確認 |
+
+同じChromeの設定で判定が分かれるため、機能全体の無効化だけでは説明できない。
+ただし「URL単位の判定処理が存在する」ことと「URLのみが差の原因である」ことは別である。2ページはHTML、本文、サイト内の役割も異なる。Google側のreadability classifierの基準は未公開であり、キャッシュ、コンテンツ、履歴の寄与は未確定。
+
+Chromiumの `ReadAloudController.java` はURLをキーとしてreadability resultを取得・一時キャッシュする。キャッシュ期間はサーバー側で合格になるまでの期間ではない。Google公式ヘルプもページによって利用できない場合があると説明する。関連出典は文書上部のChromiumリンク、および https://support.google.com/chrome/answer/14768725 。
+
+### 実装上の対応
+
+- スロット01の台帳に、日付付きの `not_readable` 観測を保存する。残り99件は引き続き未確認。確認済みスロットは0。
+- 既存の100記事HTMLとcanonical URLは変更しない。既に読み上げられるトップURLも変更しない。
+- 一覧から `player.html?slot=01` などへ遷移できる別の再生経路を設ける。公開済みの静的HTMLを同一オリジンで取得し、本文テキストだけを使ってWeb Speech APIで読み上げる。ユーザー操作で開始し、本文をサーバーにアップロードしない。
+- これはChrome標準Read Aloudの「有効化」ではない。利用可能な場合は引き続き標準機能を使い、そうでない場合の代替機能とする。音声の速度・声・バックグラウンド動作には端末差がある。
+
+### 次の検証
+
+1. 変更後も、Chrome通常タブの既存トップURLは標準読み上げ○のままか。
+2. スロット01は引き続き×か。Reader Modeは○/×のどちらか。
+3. 代替ページで「再生」「一時停止」「再開」「停止」、段落間の連続再生がAndroid実機で機能するか。
+4. スロット02など、手を加えていない別の固定記事URLでも可否が分かれるか。個別URLを試すまで、100件の可否を推定しない。
+
+この比較は2026-10-16時点の観測として扱い、Chrome更新や後日の再評価による変化を許容する。

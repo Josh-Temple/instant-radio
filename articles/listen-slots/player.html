@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f1e8">
+  <title>ブラウザ音声で聴く — Instant Radio</title>
+  <style>
+    :root{color-scheme:light dark;--paper:#f4f1e8;--ink:#132238;--muted:#667085;--line:#bcb7ab;--accent:#546d87}
+    @media(prefers-color-scheme:dark){:root{--paper:#111820;--ink:#eef1f5;--muted:#a6afb9;--line:#3b4959;--accent:#93b8d9}}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.75 system-ui,"Noto Sans JP",sans-serif}
+    main{max-width:770px;margin:auto;padding:22px 18px 90px}
+    a{color:inherit}h1{font-size:clamp(25px,6vw,37px);line-height:1.35;margin:18px 0}
+    .note,.status{color:var(--muted)}.note{font-size:14px}
+    .player{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0;padding:18px 0;border-block:1px solid var(--line)}
+    button,select,input{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:transparent;border-radius:8px;padding:8px 16px}
+    button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:700}
+    button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .settings{display:flex;flex-wrap:wrap;align-items:center;gap:12px;width:100%}
+    .settings label{font-size:14px}.settings select{max-width:100%;min-height:40px}
+    .settings input{width:140px}#progress{font-variant-numeric:tabular-nums}
+    article{font:18px/1.95 Georgia,"Noto Serif JP","Yu Mincho",serif}
+    article p{margin:0 0 1.25em;padding:3px;border-radius:4px}
+    article p.active{background:color-mix(in srgb,var(--accent) 19%,transparent)}
+    .status{min-height:1.8em;margin:0 0 12px}
+  </style>
+</head>
+<body>
+  <main>
+    <nav><a href="./index.html">← 読み物一覧へ戻る</a></nav>
+    <h1 id="title">記事を読み込んでいます</h1>
+    <p class="note">こちらは端末・ブラウザの Web Speech API による代替再生です。Chromeメニューの「このページを読み上げ」とは別の機能です。画面消灯中・バックグラウンドでの再生は保証されません。</p>
+    <section aria-label="読み上げ操作" class="player">
+      <button type="button" id="play" class="primary" disabled>▶ 再生</button>
+      <button type="button" id="pause" disabled>一時停止</button>
+      <button type="button" id="stop" disabled>停止</button>
+      <span id="progress" aria-live="off">—</span>
+      <div class="settings">
+        <label for="rate">速度</label>
+        <input id="rate" type="range" min="0.8" max="4" step="0.1" value="1.2">
+        <output id="rate-value" for="rate">1.2倍</output>
+        <label for="voice">日本語音声</label>
+        <select id="voice"><option value="">端末の既定</option></select>
+      </div>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite">本文を読み込んでいます。</p>
+    <article id="article"></article>
+  </main>
+  <script>
+    "use strict";
+    const $ = (id) => document.getElementById(id);
+    const synth = window.speechSynthesis;
+    const supported = !!synth && typeof window.SpeechSynthesisUtterance === "function";
+    const slot = new URLSearchParams(location.search).get("slot") || "";
+    const validSlot = /^(0[1-9]|[1-9][0-9]|100)$/.test(slot);
+    const segments = [];
+    const rendered = [];
+    let voices = [];
+    let index = 0;
+    let generation = 0;
+    let playing = false;
+    let paused = false;
+    let wakeLock = null;
+
+    function setStatus(message) { $("status").textContent = message; }
+    function updateControls() {
+      $("play").disabled = !supported || !segments.length || playing;
+      $("pause").disabled = !playing;
+      $("pause").textContent = paused ? "再開" : "一時停止";
+      $("stop").disabled = !playing && index === 0;
+      $("progress").textContent = segments.length ? Math.min(index + 1, segments.length) + " / " + segments.length : "—";
+    }
+    function splitText(text, max = 180) {
+      const result = [];
+      let buffer = "";
+      const sentences = text.replace(/\s+/g, " ").trim().split(/(?<=[。！？!?])/u);
+      for (const sentence of sentences) {
+        if (!sentence) continue;
+        if ((buffer + sentence).length > max && buffer) { result.push(buffer); buffer = ""; }
+        let remaining = sentence;
+        while (remaining.length > max) { result.push(remaining.slice(0, max)); remaining = remaining.slice(max); }
+        buffer += remaining;
+      }
+      if (buffer) result.push(buffer);
+      return result;
+    }
+    function addText(text) {
+      for (const part of splitText(text)) {
+        segments.push(part);
+        const p = document.createElement("p");
+        p.textContent = part;
+        $("article").append(p);
+        rendered.push(p);
+      }
+    }
+    function refreshVoices() {
+      if (!supported) return;
+      const previous = $("voice").value;
+      voices = synth.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith("ja"));
+      $("voice").replaceChildren(new Option("端末の既定", ""));
+      for (const [i, voice] of voices.entries()) {
+        $("voice").append(new Option(voice.name + " (" + voice.lang + ")", String(i)));
+      }
+      if ([...$("voice").options].some((option) => option.value === previous)) $("voice").value = previous;
+    }
+    async function acquireWakeLock() {
+      if (wakeLock || !("wakeLock" in navigator) || document.visibilityState !== "visible") return;
+      try { wakeLock = await navigator.wakeLock.request("screen"); }
+      catch { /* Wake Lock is best-effort. */ }
+    }
+    async function releaseWakeLock() {
+      const previous = wakeLock;
+      wakeLock = null;
+      if (previous) { try { await previous.release(); } catch { /* Already released. */ } }
+    }
+    function highlight() {
+      rendered.forEach((node, i) => {
+        node.classList.toggle("active", i === index);
+        if (i === index) node.setAttribute("aria-current", "true");
+        else node.removeAttribute("aria-current");
+      });
+      if (rendered[index]) rendered[index].scrollIntoView({ block: "nearest" });
+    }
+    function finish(message) {
+      playing = false; paused = false;
+      releaseWakeLock();
+      setStatus(message);
+      updateControls();
+    }
+    function speakNext(token) {
+      if (token !== generation || !playing || paused) return;
+      if (index >= segments.length) { index = 0; finish("最後まで読み終わりました。"); return; }
+      highlight();
+      updateControls();
+      const utterance = new SpeechSynthesisUtterance(segments[index]);
+      utterance.lang = "ja-JP";
+      utterance.rate = Number($("rate").value);
+      const chosen = voices[Number($("voice").value)];
+      if ($("voice").value !== "" && chosen) utterance.voice = chosen;
+      utterance.onend = () => {
+        if (token !== generation || !playing) return;
+        index++;
+        speakNext(token);
+      };
+      utterance.onerror = (event) => {
+        if (token !== generation || !playing) return;
+        finish("音声再生が停止しました（" + (event.error || "端末・ブラウザのエラー") + "）。");
+      };
+      setStatus("音声再生中です。");
+      try { synth.speak(utterance); } catch { finish("このブラウザで音声を開始できませんでした。"); }
+    }
+    function start() {
+      if (!supported || !segments.length) return;
+      generation++;
+      synth.cancel();
+      playing = true; paused = false;
+      acquireWakeLock();
+      speakNext(generation);
+    }
+    function pauseOrResume() {
+      if (!playing) return;
+      if (paused) {
+        synth.resume(); paused = false; setStatus("音声再生を再開しました。");
+      } else {
+        synth.pause(); paused = true; setStatus("一時停止中です。");
+      }
+      updateControls();
+    }
+    function stop() {
+      generation++;
+      if (supported) synth.cancel();
+      index = 0;
+      rendered.forEach((node) => { node.classList.remove("active"); node.removeAttribute("aria-current"); });
+      finish("停止しました。先頭から再生できます。");
+    }
+    async function load() {
+      if (!validSlot) { $("title").textContent = "記事の指定が正しくありません"; setStatus("一覧から記事を選択してください。"); return; }
+      if (!supported) setStatus("この環境は Web Speech API に対応していません。記事本文は表示できます。");
+      try {
+        const response = await fetch("./" + slot + ".html", { cache: "no-store" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const doc = new DOMParser().parseFromString(await response.text(), "text/html");
+        const body = doc.querySelector("article [itemprop='articleBody']");
+        const heading = doc.querySelector("article h1");
+        if (!body || !heading) throw new Error("記事の形式を確認できません");
+        const paragraphs = [...body.querySelectorAll("p")].map(p => p.textContent.trim()).filter(Boolean);
+        if (!paragraphs.length) throw new Error("本文がありません");
+        $("title").textContent = heading.textContent.trim();
+        document.title = $("title").textContent + " — Instant Radio";
+        addText($("title").textContent);
+        paragraphs.forEach(addText);
+        setStatus(supported ? "準備できました。「再生」で音声を開始します。" : "本文を表示しています。音声機能は利用できません。");
+        updateControls();
+      } catch {
+        $("title").textContent = "記事を読み込めませんでした";
+        setStatus("記事の取得に失敗しました。通信状態を確認し、一覧から開き直してください。");
+      }
+    }
+    $("play").addEventListener("click", start);
+    $("pause").addEventListener("click", pauseOrResume);
+    $("stop").addEventListener("click", stop);
+    $("rate").addEventListener("input", () => {
+      $("rate-value").textContent = Number($("rate").value).toFixed(1) + "倍";
+    });
+    window.addEventListener("pagehide", () => { generation++; if (supported) synth.cancel(); releaseWakeLock(); });
+    document.addEventListener("visibilitychange", () => {
+      if (playing && !paused && document.visibilityState === "visible") acquireWakeLock();
+    });
+    if (supported) {
+      refreshVoices();
+      if (typeof synth.addEventListener === "function") synth.addEventListener("voiceschanged", refreshVoices);
+      else synth.onvoiceschanged = refreshVoices;
+    }
+    updateControls();
+    load();
+  </script>
+</body>
+</html>
