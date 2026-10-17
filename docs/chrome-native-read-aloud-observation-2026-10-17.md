@@ -146,3 +146,16 @@ While the old shortcut still exists, identify its effective destination URL or w
 - actual opened URL / launch mode.
 
 Current release state: the root source was reverted in PR #20 to exact pre-experiment blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`, and the corresponding GitHub Pages deploy succeeded. Reversion does not prove Chrome's recognition/audio extraction state is fresh.
+
+## Home-screen launcher mode clarification (2026-10-18 JST)
+
+User confirmed: **when opening from the previously saved home-screen icon, the Chrome address bar is visible**. This makes it **more consistent with a standard Chrome browser tab/shortcut** than with a standalone installed PWA (which ordinarily hides the browser address bar). It is not definitive identification of the destination URL, browser task, or cached playback session.
+
+Retain earlier confirmed observations from the 2026-10-17 static-root test: visible article was the **new** static article, audio narrated the **old** content; the link opened from chat had native Read Aloud **unavailable**.
+
+**Update to competing hypotheses**:
+- Standalone PWA display mode: **less likely** for the old launcher path, given a visible address bar; not established as the cause.
+- Distinct URL/path/query or an existing Chrome tab/session: **still possible** until the full URL in the visible address bar is captured.
+- Old Chrome narration/extraction independently of visible DOM: still possible. Chrome's official help says reading may continue while switching among tabs, so a resumed previous playback session should also be ruled out before attributing old audio to Google server-side caching. See https://support.google.com/chrome/answer/14768725?hl=ja .
+
+**Next non-destructive request to user:** Open the original home-screen shortcut and **copy the full URL from the address bar without reloading**, then share it. Do not clear storage, remove the shortcut or edit the homepage. After the target URL is known, explicitly distinguish a newly invoked "このページを読み上げ" session from continuing/resuming the previously started speech session.
