@@ -8,6 +8,8 @@ test("experimental root is server-visible, static Japanese article text", async 
   const html = await file("index.html");
   assert.match(html, /<html lang="ja">/);
   assert.match(html, /<meta name="viewport"/);
+  assert.match(html, /<meta name="google-site-verification"/);
+  assert.match(html, /<link rel="manifest" href="\.\/manifest\.webmanifest">/);
   assert.match(html, /<main>/);
   assert.match(html, /<article>/);
   assert.match(html, /<h1>Chromeは、今表示されている文章を読み上げるか<\/h1>/);
