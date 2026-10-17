@@ -76,3 +76,45 @@ A narrowly controlled future experiment could test **server-visible, static arti
 5. Roll back if root eligibility disappears or Chrome narrates unintended content; rollback itself cannot guarantee recovery of server-side eligibility.
 
 Until then, no further URL rewrites, canonical manipulations, or invented eligibility requirements are justified by the evidence. The user confirmed the Web Speech fallback from PR #16 can play audio, but that is not native Chrome Read Aloud.
+
+## Live root static-article experiment: failed; home-screen shortcut differs (2026-10-17 JST)
+
+The user explicitly accepted the risk and authorized a production experiment using the existing formerly readable root URL. PR #19 was merged as `62d68e347f5b4751bc1f8303a599b0a3f0520f38`. GitHub Pages build and deploy completed successfully in run [38995828997](https://github.com/Josh-Temple/instant-radio/actions/runs/38995828997), and the deployed commit's `index.html` blob was `67724220ad09907082bd79669ab89d777b77e19c`.
+
+The experiment served a **static article directly in root HTML** whose first content paragraph began:
+
+> これはトップページの静的記事読み上げ検証です。
+
+The user then observed:
+
+1. Opening the supplied normal GitHub Pages root link in Chrome: **native 「このページを読み上げ」 unavailable**.
+2. Launching via a **previously saved home-screen icon/bookmark**: native reading **available**, but Chrome spoke the **older text**, not the new experiment article.
+
+This is a **negative result** for the static-root-rewrite hypothesis in the tested entry path. The second path **cannot yet be interpreted as successful current-HTML extraction**.
+
+### Alternative explanations (not yet separated)
+
+- **Different destination URL or display context.** The web app manifest specifies `start_url: "./app/"`, `scope: "./app/"`, and `display: "standalone"`. Installed app launches and ordinary browser shortcuts can differ; the exact URL reached by the older icon is not yet known.
+- **Old document served from device cache/legacy Service Worker.** The current `app/sw.js` only controls `/app/`, with network-first navigation and offline cache fallback. The root `sw.js` is a legacy unregistering script, but older installed contexts/storage may still differ; **do not assert** an old root SW definitely controlled this launch.
+- **Chrome Read Aloud URL eligibility and extracted body state cached separately.** Chromium documents URL-specific readability results and caches. The observation alone does not reveal whether the displayed DOM was old or only playback was old.
+
+Server-side and client-side HTML snapshots are **not** interchangeable evidence of actual playback text. GitHub Pages deployment success does not force Chrome's backend to refresh.
+
+### Immediate rollback and preservation
+
+The release acceptance gate for PR #19 required rollback if native Chrome Read Aloud disappeared or narrated wrong content. We restore `index.html` **byte-for-byte** from backup branch `backup/pre-root-native-readaloud-experiment-20261017`, baseline main `d33b21c87941f50b095dfd36c4d39460bcb2b4ff`, original root blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`.
+
+The experimental root-only test and GitHub Actions workflow are removed; current `/app/`, 100 fixed slots, manifest, SW scripts and draft Web Speech fallback PR #16 are unchanged. The experimental implementation remains inspectable in merged PR #19 and git history.
+
+**Rollback of bytes does not guarantee rollback of Chrome-side readability or playback caches**. Do not label any route as currently positive again without new Android testing.
+
+### Minimal no-destructive-data Android comparison
+
+Before clearing cache or uninstalling the old home-screen entry:
+
+1. Open the **old home-screen icon** and note **the URL or origin shown when sharing/copying its link** (or whether Chrome toolbar is hidden in a standalone app).
+2. Note the **visible page title and first paragraph** separately from the **first spoken words**.
+3. In a **normal Chrome tab**, open exactly `https://josh-temple.github.io/instant-radio/` without query/hash and record the title and native Read Aloud menu availability.
+4. Only after these observations consider Chrome reload, site data clear or icon recreation. Never erase the old saved launch path before identifying it.
+
+Three distinct outcomes to classify: (a) old visible+old spoken content, (b) new visible+old spoken content, (c) distinct app page/URL. The correct next action depends on which is observed.
