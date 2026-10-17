@@ -118,3 +118,31 @@ Before clearing cache or uninstalling the old home-screen entry:
 4. Only after these observations consider Chrome reload, site data clear or icon recreation. Never erase the old saved launch path before identifying it.
 
 Three distinct outcomes to classify: (a) old visible+old spoken content, (b) new visible+old spoken content, (c) distinct app page/URL. The correct next action depends on which is observed.
+
+## Confirmed displayed-content vs spoken-content mismatch (2026-10-17 JST, subsequent user clarification)
+
+The user confirmed that, when they launched the older **home-screen shortcut** during the PR #19 root article experiment:
+
+- **Visible text:** the **new article text**, not the former homepage text.
+- **Chrome native Read Aloud speech:** the **older text**, not what was visible on the page.
+- **A normally opened link to the root** did not offer native Read Aloud.
+
+Therefore **"old HTML was simply being displayed" is not a sufficient explanation of this observed mismatch**. This is positive evidence of a **display/playback content divergence**. It does not independently identify where old speech content was held or the actual destination URL opened by the home-screen shortcut.
+
+An official Google Chrome Enterprise policy description states that Android Chrome's Listen To This Page uses **server-side content distillation and audio synthesis** (https://chromeenterprise.google/policies/listen-to-this-page-enabled/). That mechanism makes a server-side snapshot/refresh lag **plausible**, but the user's observation alone does not establish:
+1. A specific cache implementation or TTL.
+2. Whether Chrome resumed an older playback session instead of starting a fresh extraction.
+3. Whether the older shortcut opens the root URL or the installed PWA route `/app/` (manifest `start_url`).
+4. That changing/clearing site storage, refreshing, or changing URLs would force up-to-date native speech.
+
+### Next non-destructive observations
+
+**Do not clear Chrome storage, uninstall/recreate the home-screen shortcut, or change the root HTML again at this stage.**
+
+While the old shortcut still exists, identify its effective destination URL or whether it opens a standalone PWA without the normal address bar. At a future controlled test where displayed and spoken content diverge, separately log:
+- visible title/first sentence,
+- spoken first sentence,
+- whether speech starts from a new Chrome menu invocation or resumes an existing session,
+- actual opened URL / launch mode.
+
+Current release state: the root source was reverted in PR #20 to exact pre-experiment blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`, and the corresponding GitHub Pages deploy succeeded. Reversion does not prove Chrome's recognition/audio extraction state is fresh.
