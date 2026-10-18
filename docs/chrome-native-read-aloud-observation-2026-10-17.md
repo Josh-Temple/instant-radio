@@ -159,3 +159,25 @@ Retain earlier confirmed observations from the 2026-10-17 static-root test: visi
 - Old Chrome narration/extraction independently of visible DOM: still possible. Chrome's official help says reading may continue while switching among tabs, so a resumed previous playback session should also be ruled out before attributing old audio to Google server-side caching. See https://support.google.com/chrome/answer/14768725?hl=ja .
 
 **Next non-destructive request to user:** Open the original home-screen shortcut and **copy the full URL from the address bar without reloading**, then share it. Do not clear storage, remove the shortcut or edit the homepage. After the target URL is known, explicitly distinguish a newly invoked "このページを読み上げ" session from continuing/resuming the previously started speech session.
+
+## Exact URL of older home-screen Chrome shortcut confirmed (2026-10-19 JST)
+
+The user copied and supplied the **full address-bar URL** from the previously created Android home-screen shortcut:
+
+`https://josh-temple.github.io/instant-radio/`
+
+This is **identical to the canonical bare root path used by the normal chat link** during the 2026-10-17 production experiment. The user also separately confirmed the shortcut shows a Chrome address bar (2026-10-18). Thus **different URL, path, query parameters, or fragment** do **not** explain the reported discrepancy for the captured URL. (Different tab/browser contexts or retained read-aloud playback state remain possible.)
+
+Historical paired observation: when the experimental static root article was live, the screen displayed its **new** text, but the older home-screen Chrome entry allowed native speech that read **old** text; opening that same URL from the chat link did not offer native Read Aloud.
+
+### Remaining hypotheses; no causal assertion yet
+
+1. **Previously initiated Read Aloud session resumed/continued**. Official Chrome Help states that Read Aloud can continue while switching tabs and with the display locked: https://support.google.com/chrome/answer/14768725?hl=ja .
+2. **Page eligibility and/or distilled speech content retained independently of displayed HTML in Chrome or its service infrastructure**. Google Chrome Enterprise policy describes server-side content distillation and audio synthesis: https://chromeenterprise.google/policies/listen-to-this-page-enabled/ . However, this does **not** prove any specific stale-cache root cause or refresh interval.
+3. **Per-tab/profile/browser-instance state** despite identical URL; browser tabs and launch context may differ.
+
+### Single most informative next observation
+
+Ask whether, after tapping the old home-screen shortcut, the user **newly selected** Chrome's three-dot menu `このページを読み上げ` to begin playback, or instead **resumed/continued an already existing player/audio session**. That distinguishes the strongest session-reuse alternative without clearing cache, deleting bookmarks, or changing HTML.
+
+Current main top `index.html` was verified 2026-10-19 as original blob SHA `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9` after PR #20 rollback. Do **not** change it for this documentation update.
