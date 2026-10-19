@@ -212,3 +212,17 @@ Keep original home-screen shortcut and Chrome browsing data intact. To isolate *
 This experiment holds URL and browser identity constant while changing tab/launch context, without clearing any cache. Note that PR #20 already reverted the root HTML, so the original new-article vs old-audio mismatch cannot be reproduced from current production content without another authorized content change. **Do not perform that content change at this stage.**
 
 **Current release boundary:** baseline root blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9` remains unmodified; PR #16's Web Speech fallback is separate and not proof of native Chrome eligibility.
+
+## Fresh direct Chrome tab: native Read Aloud menu available (2026-10-20 JST)
+
+Following the earlier request to isolate Chrome tab-launch context, the user **launched the Chrome app directly**, opened a **new tab**, entered the exact public root URL in the address bar, and reported **「読み上げは表示されます」**: the native `このページを読み上げ` menu entry is **present**.
+
+Test URL: `https://josh-temple.github.io/instant-radio/`.
+
+**What this confirms:** The bare root URL is not universally or irreversibly ineligible for native Read Aloud after the prior experiment and rollback. A newly created Chrome tab can offer the native menu on this user's device.
+
+**What it does not confirm:** The user has **not yet reported starting audio** in this new tab, so successful fresh playback and correct/current body extraction remain **untested**. Earlier negative result opening a chat link was observed while the static experimental root HTML was live on 2026-10-17; the current positive occurs **after PR #20 restored the original root HTML**. Thus entry path is not the only changed variable, and **do not claim that in-app links cause the feature to fail** based on these two historical observations.
+
+Verification at the repository: root `index.html` still has original restored blob SHA `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`. The website itself and all 100 slots remain unchanged in this documentation-only update.
+
+**Next non-destructive observation:** In that same newly created Chrome tab, tap the native menu entry and check (1) whether audio actually starts, and (2) whether narrated content matches the **currently visible restored Instant Radio home page**, rather than the static experimental article or unrelated stale text. Do not clear site data, delete the old home-screen shortcut, or rewrite the root again.
