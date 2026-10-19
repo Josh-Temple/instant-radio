@@ -181,3 +181,34 @@ Historical paired observation: when the experimental static root article was liv
 Ask whether, after tapping the old home-screen shortcut, the user **newly selected** Chrome's three-dot menu `このページを読み上げ` to begin playback, or instead **resumed/continued an already existing player/audio session**. That distinguishes the strongest session-reuse alternative without clearing cache, deleting bookmarks, or changing HTML.
 
 Current main top `index.html` was verified 2026-10-19 as original blob SHA `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9` after PR #20 rollback. Do **not** change it for this documentation update.
+
+## Explicit fresh menu invocation, but old speech (reported 2026-10-20 JST)
+
+The user clarified that **they actively tapped Chrome's overflow menu `このページを読み上げ` anew** from the older home-screen Chrome tab. They did **not merely tap Resume/Play on an already visible player**. The exact URL was previously confirmed as `https://josh-temple.github.io/instant-radio/` in both entry paths.
+
+Combined direct observations from the 2026-10-17 root article trial:
+
+| Dimension | Older Android home-screen Chrome shortcut | Link opened from chat |
+| --- | --- | --- |
+| URL | Exactly the bare root, confirmed from address bar | Same bare root |
+| Browser chrome | Address bar shown | User describes opening a normal link; app-to-browser launch context not independently verified |
+| Visible content | **New static article** at that time | New static article deployed at same root |
+| Chrome native menu | **Available, actively invoked anew** | Unavailable |
+| Narration | **Older text**, different from visible new article | None |
+
+This strongly contradicts a simple explanation that the user accidentally resumed audio by pressing the old mini-player. It does **not** categorically rule out Chrome's *automatic* saved-playback restoration.
+
+### Source-level separation: cached readability vs narrated body vs saved playback state
+
+1. **Readability state is cached client-side per URL** in the cited Chromium `ReadAloudController.java`. `sReadabilityInfoMap` is an LRU map; `maybeCheckReadability()` reuses an unexpired result. In the inspected snapshot it expires after `HOUR_TO_MS` = one hour. This describes **client-side readability check state**, **not** an established Google server-side speech-content cache TTL: https://chromium.googlesource.com/chromium/src/+/7c0f87e29c4ff8bcdfe9a6eee0a1ae3cdb2ac708/chrome/browser/readaloud/android/java/src/org/chromium/chrome/browser/readaloud/ReadAloudController.java
+2. In the same file, `playTab()` explicitly checks for a saved playback state tied to the same `Tab` and may invoke `restoreStateOnForeground()` **even after the overflow-menu action**. Therefore a fresh menu tap by itself does not prove the underlying speech data was freshly generated.
+3. For a genuinely new playback, `PlaybackArgs` includes the sanitized URL and a `dateModifiedMsSinceEpoch` extracted from the tab (or 0 on failure). The implementation of the downstream Android content/speech backend cannot be inferred from this argument alone.
+4. Google Chrome Enterprise's policy document confirms Android Listen To This Page uses **server-side content distillation and audio synthesis**: https://chromeenterprise.google/policies/listen-to-this-page-enabled/ . A stale backend extraction is **plausible**, **not verified**.
+
+### Best next non-destructive experiment
+
+Keep original home-screen shortcut and Chrome browsing data intact. To isolate **ChatGPT's link-opening context vs Chrome tab context**, open **the exact same URL in a brand-new normal Chrome tab by typing/pasting it directly into Chrome's address bar** (do not navigate via the ChatGPT link, home shortcut or PWA). Compare if the overflow-menu native `このページを読み上げ` entry is present. If it is present, invoke it and record the first narrated sentence; if absent, record absence.
+
+This experiment holds URL and browser identity constant while changing tab/launch context, without clearing any cache. Note that PR #20 already reverted the root HTML, so the original new-article vs old-audio mismatch cannot be reproduced from current production content without another authorized content change. **Do not perform that content change at this stage.**
+
+**Current release boundary:** baseline root blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9` remains unmodified; PR #16's Web Speech fallback is separate and not proof of native Chrome eligibility.
