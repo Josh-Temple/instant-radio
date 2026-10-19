@@ -226,3 +226,22 @@ Test URL: `https://josh-temple.github.io/instant-radio/`.
 Verification at the repository: root `index.html` still has original restored blob SHA `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`. The website itself and all 100 slots remain unchanged in this documentation-only update.
 
 **Next non-destructive observation:** In that same newly created Chrome tab, tap the native menu entry and check (1) whether audio actually starts, and (2) whether narrated content matches the **currently visible restored Instant Radio home page**, rather than the static experimental article or unrelated stale text. Do not clear site data, delete the old home-screen shortcut, or rewrite the root again.
+
+## Fresh direct Chrome tab: native playback and current visible content match (2026-10-20 JST)
+
+Following the previous test where the native menu reappeared, the user reported:
+
+> 今開いている新しいChromeタブで「このページを読み上げ」を押したとき、実際に音声が流れ、現在画面に表示されているInstant Radioの内容が読み上げられます。
+
+**Directly observed positive control:**
+- Device entry path: Chrome app directly → brand-new normal tab → manually entered `https://josh-temple.github.io/instant-radio/`.
+- Native Chrome menu `このページを読み上げ`: **present**.
+- Native audio playback: **started and audible**.
+- Narrated content: **matches the currently displayed Instant Radio homepage**, unlike the prior experiment's stale-narration anomaly.
+- This is an actual Android Chrome test, **not** a Web Speech API player result.
+
+**Status at this point:** The exact restored root `index.html` is still the pre-experiment blob SHA `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`. Thus on the tested Chrome tab and restored homepage, native Read Aloud is functioning. The earlier static-root HTML change in PR #19 failed its acceptance test and was rolled back by PR #20.
+
+**Bounds of the conclusion:** This does **not** demonstrate that fresh audio extraction would work after another root content update; it does not establish any deterministic cache expiration or a bug root cause. It does **not** establish native eligibility for any of the 100 fixed slot URLs. Slot 01 and 07 were separately observed unavailable earlier; `listen-slots/registry.json` must not be marked 100/100 verified, nor should unconfirmed slots be rotated. The homepage should remain untouched while this working native result is preserved.
+
+**Practical follow-up:** If a new native-reading discrepancy occurs, record the precise URL, visible text and first spoken words in the same fresh browser tab. Do not infer an automatic fix from root success or start another root rewrite without a new explicit decision and rollback gate.
