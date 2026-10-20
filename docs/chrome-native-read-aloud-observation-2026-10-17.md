@@ -309,3 +309,46 @@ Both refer to the repository's same root `index.html` source in the conventional
 If slash is positive but `/index.html` is negative for the same visible page, this supports URL-specific eligibility/state as a differentiator independently of the article-slot layout, though any server redirect or client cache would still need consideration. If both are positive, the contrast with slot 01 and 07 persists but does not isolate HTML versus URL.
 
 Until the test, **do not** rewrite the successful root, the 100 slot pages or registry; preserve native-readable URLs and the functional Web Speech fallback separately. Negative observations belong in this documented log, not a claim that all 100 are ineligible.
+
+## Explicit /index.html alias cannot be read; indexing-and-structure hypothesis (2026-10-20 JST)
+
+Following the proposed no-edit URL alias experiment, the user confirmed **「読み上げ不可です」** when opening:
+
+`https://josh-temple.github.io/instant-radio/index.html`
+
+This contrasts with their established **positive native menu + audible current-content playback** at:
+
+`https://josh-temple.github.io/instant-radio/`
+
+The same-day fresh Android Chrome new-tab negatives also apply to `articles/listen-slots/01.html` and `07.html`.
+
+Both `/` and `/index.html` conventionally serve the repository's same `index.html` (root source blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`). This makes differences in the underlying repository HTML an unlikely explanation for the two root URL forms. **However, the experiment did not independently confirm the alias's final address bar or actual HTTP response body and redirect history**, so avoid claiming a byte-for-byte verified live response equivalence.
+
+### User hypothesis: "Google indexing plus age plus suitable structure"?
+
+**Assessment:** plausible research hypothesis; **not a proven necessary-and-sufficient condition**.
+
+- **Strongly supported:** Native Chrome Read Aloud has URL-addressed readability evaluation. Chromium Android `ReadAloudController.java` calls `mReadabilityHooks.isPageReadable(urlSpec, ...)` and caches results keyed by sanitized URL hashes; this is an actual, documented processing path.
+- **Plausible but not isolated:** Server-side content extraction quality may matter. Google Chrome Enterprise states that the feature uses server-side content distillation and audio synthesis. The HTML shape by itself cannot account for the reported alias contrast.
+- **Unproven:** Being registered in *Google Search's index*, having a particular Google-selected canonical, or waiting N hours/days after publication is a requirement for Chrome native Read Aloud. Official Chrome Help only states that the feature is not supported on every page; it does not publish an indexing or age eligibility formula.
+- **Search index ≠ Read Aloud service:** Google Search Central explicitly describes crawl/index/canonical selection for search results, not Read Aloud eligibility. Search Console's URL Inspection data is useful as an independent correlation observation, but a different service's status cannot establish Chrome classifier rules.
+- **Prior independent Search Console context:** The research note `docs/chrome-read-aloud-findings-2026-10-07.md` documented the root as `URL is not on Google` at 2026-10-07 22:20–22:23 JST, alongside other URLs. Historical root native-readability positives were recorded around that research period, but **not necessarily at precisely the same timestamp**. Do not infer either indexing necessity or impossibility from this unsynchronized historical sample.
+- **Not sufficient by itself:** Semantic article HTML, metadata and a responsive viewport did not make slot 07 natively readable; fixed-width-only explanations also fail.
+
+Official materials:
+- Android Chrome Help: https://support.google.com/chrome/answer/14768725?hl=en
+- Chrome Enterprise Android ListenToThisPageEnabled: https://chromeenterprise.google/policies/listen-to-this-page-enabled/
+- Chromium `ReadAloudController`: https://chromium.googlesource.com/chromium/src/%2B/06d300357b510d33bf53b8e8b5cdbd736dae676c/chrome/browser/readaloud/android/java/src/org/chromium/chrome/browser/readaloud/ReadAloudController.java
+- Google Search Central canonicalization: https://developers.google.com/search/docs/crawling-indexing/canonicalization?hl=ja
+
+### Next evidence collection without changing published files
+
+In Google Search Console, perform **URL Inspection separately** for all four URLs (bare root; explicit `/index.html`; slot 01; slot 07), and record on the same date:
+1. Exact URL inspected, Indexed / Not indexed result, and Google-selected canonical.
+2. Last crawl date and whether Googlebot could retrieve the page, if provided.
+3. **Live URL test** separately from indexed-status test; the live result is not proof it is indexed.
+4. On-device native Read Aloud status tested in new normal Chrome tabs on the same day, including the address-bar URL after loading.
+
+Only after comparing these observations can the *correlation* between Search indexing, URL selection and native readability be assessed. None alone establishes causation; in particular a Search Console indexing request is **not** a known Read Aloud enablement switch.
+
+Do not modify the restored positive root, aliases, article content, registry, SW, or Chrome site data during this observational phase. Avoid marking any of 100 slots `confirmed`. Preserve user privacy and the working Web Speech fallback.
