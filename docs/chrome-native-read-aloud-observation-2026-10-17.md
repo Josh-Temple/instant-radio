@@ -273,3 +273,39 @@ Repository fresh-read at this observation:
 Open a **brand-new tab in the Chrome app itself** and manually navigate to
 `https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html`.
 Check the native overflow menu. If the option is present, verify actual playback and matching article content. Record result before changing any HTML.
+
+## Slot 07: native Read Aloud unavailable in direct new Chrome tab (2026-10-20 JST)
+
+The user explicitly followed the same direct Chrome new-tab protocol with:
+`https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html`
+
+**Observed Android result:** Chrome overflow menu does **not** show `このページを読み上げ`. This matches slot 01's direct-new-tab negative result. The bare root's direct-new-tab positive control was verified with actual audio and content matching the visible homepage.
+
+Latest repository verification before this note:
+- main `114a8328a45e846e425c51a11e9ae8b211e06fa3`
+- unchanged working root `index.html` Git blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`
+- unmodified slot 01 blob `ef3544e449917eece71cd5961587dfcd6a7b4fcb` (fixed-width layout, no viewport meta)
+- unmodified slot 07 blob `17e29ede796ebbf2bcc8b952b41dd0a2513633cc` (responsive viewport, article semantics, metadata and canonical)
+- all 100 registry entries `read_aloud_status: "not_checked"`; no slot has positive native playback evidence
+
+### What the two negatives rule out — and do not rule out
+
+- **Chrome app vs ChatGPT link entry** does not explain the two negative tests: both failed when directly opened in fresh Chrome tabs, under the protocol that worked on root.
+- **Missing viewport or fixed width alone** is not a sufficient explanation: slot 07 has a responsive viewport, but still fails.
+- An explicit semantic `<article>`, `itemprop="articleBody"` and descriptive metadata are **not sufficient** to make Chrome native reading available.
+- This **does not prove** Chrome classifies these URLs solely by path, that a canonical tag causes failure, that publishing/indexing timing is causal, or that other 98 slots fail.
+- The backend criteria and recheck timing are not publicly specified. Google Chrome Help says Listen to this page is not yet available on all websites (https://support.google.com/chrome/answer/14768725?hl=en), and Chromium's Android controller checks per-URL readability results (https://chromium.googlesource.com/chromium/src/%2B/b47836622df89edc8dd4c52f956e5c43a00fc81f/chrome/browser/readaloud/android/java/src/org/chromium/chrome/browser/readaloud/ReadAloudController.java). A one-hour *client* readability-result expiry in the inspected source is not a proven *server* eligibility refresh time.
+
+### Next no-edit A/B experiment: root slash vs explicit index.html
+
+Test the existing `index.html` page using two URL forms in **separate fresh Chrome tabs**, with no edits to any content:
+
+**Known positive:** `https://josh-temple.github.io/instant-radio/`
+
+**Candidate alias:** `https://josh-temple.github.io/instant-radio/index.html`
+
+Both refer to the repository's same root `index.html` source in the conventional GitHub Pages layout; however, **the live HTTP bytes, potential redirect and final address were not independently verified in this environment**. Therefore the tester should confirm the visible page title/content and check if the address bar remains `/index.html` before interpreting the outcome.
+
+If slash is positive but `/index.html` is negative for the same visible page, this supports URL-specific eligibility/state as a differentiator independently of the article-slot layout, though any server redirect or client cache would still need consideration. If both are positive, the contrast with slot 01 and 07 persists but does not isolate HTML versus URL.
+
+Until the test, **do not** rewrite the successful root, the 100 slot pages or registry; preserve native-readable URLs and the functional Web Speech fallback separately. Negative observations belong in this documented log, not a claim that all 100 are ineligible.
