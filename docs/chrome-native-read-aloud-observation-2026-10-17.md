@@ -245,3 +245,31 @@ Following the previous test where the native menu reappeared, the user reported:
 **Bounds of the conclusion:** This does **not** demonstrate that fresh audio extraction would work after another root content update; it does not establish any deterministic cache expiration or a bug root cause. It does **not** establish native eligibility for any of the 100 fixed slot URLs. Slot 01 and 07 were separately observed unavailable earlier; `listen-slots/registry.json` must not be marked 100/100 verified, nor should unconfirmed slots be rotated. The homepage should remain untouched while this working native result is preserved.
 
 **Practical follow-up:** If a new native-reading discrepancy occurs, record the precise URL, visible text and first spoken words in the same fresh browser tab. Do not infer an automatic fix from root success or start another root rewrite without a new explicit decision and rollback gate.
+
+## Slot 01: direct new Chrome tab still ineligible (2026-10-20 JST)
+
+The user followed the same successful entry sequence used for the restored homepage:
+
+1. Start the Chrome application directly on Android.
+2. Open a **new normal Chrome tab**, enter the exact slot URL in its address bar (not a ChatGPT link, not a home-screen icon):
+   `https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html`
+3. Check Chrome's own overflow menu for `このページを読み上げ`.
+
+**Observed result (user confirmation): menu unavailable.** This contrasts with the **positive control** from a new Chrome tab at the bare root on the same day: Chrome's native menu appeared, playback started and the narration matched the visible restored Instant Radio homepage.
+
+Repository fresh-read at this observation:
+- main `006cfae1901881ec9d67565249e08dbb5c1c0d2f`
+- unchanged root `index.html` blob `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`
+- slot 01 `articles/listen-slots/01.html` blob `ef3544e449917eece71cd5961587dfcd6a7b4fcb`, static Japanese `Article` markup and canonical URL, **no viewport meta**.
+- slot 07 `articles/listen-slots/07.html` blob `17e29ede796ebbf2bcc8b952b41dd0a2513633cc`, **responsive viewport**, not yet tested by the successful direct-new-tab protocol.
+- registry: `100` slots with `read_aloud_status: "not_checked"`; **no slot is confirmed readable**.
+
+**Conclusions limited to evidence:** Launching from the ChatGPT app is **not a sufficient explanation** for slot 01's native menu absence, because the same URL fails from a new tab opened directly in Chrome. The root and slot 01 may differ in Chrome's eligibility/content handling, but this experiment does not identify a causal HTML feature. Previous checks of slots 01 and 07 on Android used different or incompletely controlled entry paths; direct-new-tab comparison of slot 07 is the next low-risk test.
+
+**Do not change** the root, slot content, fixed URLs, PWA, or slot registry. In particular, do **not** relabel slot 01 `confirmed`, rotate it, or mark all 100 as failing. Existing `not_checked` status is left unchanged because the registry's only automation rule allows reuse of explicitly `confirmed` slots; individual negative device observations are recorded here instead of introducing an unreviewed status enum.
+
+### Next independent control: slot 07
+
+Open a **brand-new tab in the Chrome app itself** and manually navigate to
+`https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html`.
+Check the native overflow menu. If the option is present, verify actual playback and matching article content. Record result before changing any HTML.
