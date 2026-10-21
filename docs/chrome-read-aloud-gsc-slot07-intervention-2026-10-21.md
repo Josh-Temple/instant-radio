@@ -170,3 +170,20 @@ Android実機側では同じChromeアプリ・プロファイルで新しい通�
 **解釈:** GSC上のIndex状態の変化と、ユーザー報告のslot07音声再生成功は同じ観測時点で確認された。ただし、登録リクエスト受理・Googleクロール・検索Index登録・Chrome Read Aloudの利用可否の時間的関係は分離されており、この対応だけでIndex登録がRead Aloudを有効化したという因果は確定できない。GSCのライブURLテストは今回行っていないため、その結果については何も主張しない。
 
 **画面証拠の保存範囲:** スクリーンショットはWork実行会話に取得・表示し、上記の可視内容をGitHub記録へ転記した。画像ファイル自体はこのGitHubリポジトリには添付していない。
+
+
+## 2026-10-21 追加介入：登録済みslot07の静的本文差し替えテスト
+
+**新しい問い：** 同じURLで、Google Search Index登録とAndroid Chrome標準「このページを読み上げ」の本文音声再生が一度成功した後、**記事本文・題名だけを別の内容へ入れ替えても、新しい本文を読み上げるか**。このテストは先の「07へのGSC登録リクエストが効いたか」を調べる実験とは**別介入**である。今後の同じURLの結果を「初回申請のみの影響」として分析しない。
+
+- ユーザーの明示依頼：slot07の竹取物語記事を、当日話題となっているPHPのセキュリティ警告とハッキングの解説（約6,000文字）に変更する。
+- 変更前main: `0b387718dd333cdbcb6ae609b08951370a5133d2`
+- 変更前slot07 HTML blob: `17e29ede796ebbf2bcc8b952b41dd0a2513633cc`。元の本文は上記commitから復元可能。
+- 変更前slot01 HTML blob: `ef3544e449917eece71cd5961587dfcd6a7b4fcb`、既知陽性のroot blob: `0eaecbaf49160e0947c3cb34640f5d3b6efd8ef9`。
+- 変更対象：`articles/listen-slots/07.html`のタイトル・説明・本文・構造化データ・公開メタデータ、一覧`articles/listen-slots/index.html`の07行、`articles/listen-slots/registry.json`の07タイトル/タグ/更新時刻のみ。
+- **URLは厳密に不変：** `https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html`。 `rel=canonical` も変更しない。ページの外観、article・articleBody、静的な段落本文、viewportは維持する。
+- 新しい本文：**6,740文字、29段落**（段落間改行を除く）。表示本文とJSON-LDの`articleBody`は一致することをブランチで検証。記事は2026年10月21日夜、PHPセキュリティ更新公開予定時刻前の一次資料で書かれているため、情報時点の注意書きを含む。公開後の技術的な詳細は追加の正式発表で更新確認が必要。
+- 参考一次資料：PHP開発チーム https://www.php.net/archive/2026.php#2026-10-20-1 、IPA https://www.ipa.go.jp/security/security-alert/2026/pre-alert20261021.html 、CERT-EU https://cert.europa.eu/publications/security-advisories/2026-018/ 、PHPサポート期間 https://www.php.net/supported-versions.php 、OWASP 2025 https://top10.owasp.org/2025/ja/。
+- `registry.json` の07は **`read_aloud_status: not_checked`のまま維持**。確認済みへ更新すると自動ローテーション対象になるため、実験中に再度上書きされる危険を防ぐ。スロット01やその他99件の本文・index状態・URL・サイトマップは変更しない。新たなGSC登録リクエストは送らない。
+- 公開後の受入試験：匿名HTTPで07が200、キャッシュ後の新タイトル・新本文が見えることを確認。Android Chromeの新しい通常タブで、①メニュー有無、②実際の音声再生開始、③**旧「竹取物語」でなく新「PHP」の本文が話されるか**、④終盤までの読み上げや音声の途中停止を記録する。ユーザーの実機からの報告があるまでは**本文差し替え後のChrome音声再生を未検証**とする。
+- Google Search ConsoleのURL検査でindex状態が残っているかも必要に応じて別途検証する。ただし公開成功とIndex反映やChrome読み上げ可否は別の事象。
