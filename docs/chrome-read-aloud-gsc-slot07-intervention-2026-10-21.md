@@ -148,3 +148,25 @@ Android実機側では同じChromeアプリ・プロファイルで新しい通�
 - **因果は未判定:** 申請受理と読み上げ成功の時間的順序、および未申請群との対比は明瞭だが、Chrome独自のreadability再判定、通常の時間経過、キャッシュやGoogle Search Index状態との関係は識別できていない。**GSC未登録のまま成功したか否かが次の最重要検証点**。
 - **登録操作は追加しない:** slot07へのインデックス登録リクエストは繰り返さず、slot01は変更しない。次は両URLの**Google Index（非ライブ）URL検査**をWork Cloud Browserで実施する。ライブテストがインデックス登録完了を意味しないことに注意。
 - **registryを今回変更しない理由:** `read_aloud_status` を `confirmed` にすると固定URL自動再利用の対象になり得るため、アクティブな介入群の本文が入れ替わるリスクがある。**実機再生の成功自体は文書にconfirmedとして記録する一方、実験が完了し明示的に凍結解除するまではslot07のレジストリを`not_checked`で維持**する（`confirmed`登録は実験終了後の別判断）。トップ、01、07、残る98スロット、canonical、sitemap、PWA、Vercelには変更なし。
+
+
+## 2026-10-21 介入後Google Index再検査（Android実音声成功報告後）
+
+検査担当: ChatGPT Work Cloud Browser。対象プロパティ: `https://josh-temple.github.io/instant-radio/`。
+
+**検査範囲:** GSCのURL検査で表示されたGoogle Indexの状態を確認した。これはインデックス済みデータの検査であり、`TEST LIVE URL` は実行していない。画面にあった「REQUEST INDEXING」は押していない。サイト・記事HTML・canonical・サイトマップ・registry・Vercelへの変更も行っていない。
+
+**操作側検査時刻（JST）:** slot07検査開始 2026-10-21 19:07:53.998、画面証拠取得 19:09:22.902。slot01検査開始 19:09:30.502、画面証拠取得 19:09:40.587。これらは操作側のUTC時計をJSTへ換算した時刻であり、GSC画面自体には検査時刻の表示がない。
+
+| URL | Google Indexの表示 | 最終クロール | Googlebot / 取得・許可 | User-declared canonical | Google-selected canonical | 画面証拠 |
+|---|---|---|---|---|---|---|
+| [slot07](https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html) | `URL is on Google`; `Page is indexed` | `Oct 21, 2026, 12:43:51 PM`（GSC表示。タイムゾーンは画面に表示なし） | `Googlebot smartphone`; Crawl allowed `Yes`; Page fetch `Successful`; Indexing allowed `Yes` | slot07自身のURL | `Inspected URL`（画面表示。検査対象のslot07 URLと同一） | Work画面を19:09:22.902 JSTに取得。この会話の実行記録に画面画像を表示。 |
+| [slot01](https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html) | `URL is not on Google`; `Page is not indexed: URL is unknown to Google` | `N/A` | Crawled as / Crawl allowed / Page fetch / Indexing allowed はすべて `N/A` | `N/A` | `N/A` | Work画面を19:09:40.587 JSTに取得。この会話の実行記録に画面画像を表示。 |
+
+両URLとも画面上で参照元サイトマップ・参照ページは検出されていない。slot07は以前のベースライン `URL is unknown to Google` から、今回の検査では `URL is on Google` へ変わっていた。slot01は引き続き未登録だった。
+
+ユーザーは今回の依頼で、Android Chrome標準「このページを読み上げ」からslot07の記事本文が実際に音声再生されたこと、slot01は引き続き読み上げ不可であることを実機観測として報告した。この端末結果はユーザー報告として記録し、WorkがAndroid音声を独立検証したとは扱わない。
+
+**解釈:** GSC上のIndex状態の変化と、ユーザー報告のslot07音声再生成功は同じ観測時点で確認された。ただし、登録リクエスト受理・Googleクロール・検索Index登録・Chrome Read Aloudの利用可否の時間的関係は分離されており、この対応だけでIndex登録がRead Aloudを有効化したという因果は確定できない。GSCのライブURLテストは今回行っていないため、その結果については何も主張しない。
+
+**画面証拠の保存範囲:** スクリーンショットはWork実行会話に取得・表示し、上記の可視内容をGitHub記録へ転記した。画像ファイル自体はこのGitHubリポジトリには添付していない。
