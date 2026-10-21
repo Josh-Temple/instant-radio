@@ -105,3 +105,30 @@ Android実機側では同じChromeアプリ・プロファイルで新しい通�
 | 唯一の介入 | slot07 | ボタン押下 2026-10-21 03:39:15 UTC / 12:39:15 JST、受理表示確認 03:39:26 UTC / 12:39:26 JST | 07のGoogle Index画面で `REQUEST INDEXING` を**1回**押下。完了ダイアログは `Indexing requested`、`URL was added to a priority crawl queue. Submitting a page multiple times will not change its queue position or priority.`。ダイアログ内に日時表示なし。 | [07申請受理画面](https://chatgpt.com/api/library/files/libfile_cb973fbeff4881919c90be08c05eed96/download) |
 
 01には申請していない。この記録はGoogleが申請を受理したことだけを示し、クロール、検索Index登録、Android Chrome標準「このページを読み上げ」の可否は未確認。Android実機の同期観測はこのWork実行には含まれない。サイトHTML、canonical、sitemap、100スロット、Vercelには変更を加えていない。介入後の独立した再検査は未実施であり、フェーズ2の追跡観測として別途記録する。
+
+## 2026-10-21 介入後Android実機観測：07で読み上げ可能の報告
+
+**証拠の種類:** ユーザー本人のAndroid Chrome実機観測報告。Work Cloud BrowserによるChromeネイティブメニューの自動検証ではない。報告された正確な端末操作時刻は未取得（2026-10-21 JSTの申請受理後にチャットで共有）。本文の録音・スクリーンショット・Chromeバージョン・アドレスバー最終URLも未取得。
+
+申請受理確認は2026-10-21 **12:39:26 JST**（上記実施記録）。その後、ユーザーは前節の「01・07をAndroid Chromeから再確認する」という依頼への回答として、以下を報告した。
+
+> 01は不可でしたが、07が可能でした
+
+### 過去の実機結果と介入後の変化
+
+| URL | 介入前のAndroid実機報告 | 介入後のAndroid実機報告 | 受けた介入 |
+|---|---|---|---|
+| slot01 | Chromeネイティブ `このページを読み上げ` メニューなし | **読み上げ不可のまま** | GSC申請なし |
+| slot07 | Chromeネイティブ `このページを読み上げ` メニューなし | **読み上げ可能になった** | GSCでインデックス登録リクエストを07へ1回送信・受理 |
+
+**重要な未確定項目:** ユーザーの「07が可能でした」が**メニュー表示だけ**を指すのか、実際にボタンを押して**音声が開始・表示中の07本文と一致**したのかはまだ確認されていない。後者が確認されるまで厳密な意味での「記事音声再生成功」と登録ステータス `confirmed` への変更は行わない。また、**07の申請後のGoogle Search Index状態**はこの時点で未検査。「申請受理」「Googleクロール」「Google検索インデックスへの掲載」「Chrome Read Aloudの有効化」は別事象である。
+
+### 解釈と次の必須測定
+
+- 事前指定した介入群slot07に**介入後の肯定的な端末状態変化**が現れ、未申請のslot01は陰性のまま。この時系列・対照群の対比は、索引リクエストや同時期に生じたGoogle/Chrome側のURL評価変更との関連を検証する根拠になる。
+- **因果効果は未確定。** 07が偶然この時点でChromeに評価された、GoogleのSearch Indexとは異なるreadability判定が更新された、クライアント側キャッシュが期限切れになったなどの代替説明が残る。
+- **最優先:** 同じGoogle Search Consoleプロパティの**Index（非ライブ）URL検査**でslot07・slot01を直ちに再確認し、Google Indexの状態、Google選択canonical、最終クロール、取得時刻、取得結果および画面証拠を記録。**登録リクエストは再送しない。**
+- **Android追試:** ユーザーに、slot07でChromeネイティブメニューから実際に音声が開始し、本文が現在表示中の記事と一致するかを確認してもらう。Web Speech APIではなくChrome本体の `このページを読み上げ` を使用。Chromeバージョン・正確な最終URL・JST日時も可能なら記録。
+- **登録に関する反証解釈には注意:** Search ConsoleのIndex表示が申請後も「unknown」の場合、Chromeが読めてもSearch Indexの状態が遅延更新されている可能性があるため、その時点の**表示上は未登録で読み上げ可**と記録し、Google内部で未登録のまま十分に読み上げ可能と断定しない。
+
+**変更なしを維持:** `index.html`（既知陽性）、01・07のHTML、canonical、サイトマップ、slot registry、PWA、Vercel、Chromeキャッシュ。対照群01の申請は引き続き禁止。
