@@ -92,3 +92,16 @@ Android実機側では同じChromeアプリ・プロファイルで新しい通�
 - 検証データは事実・担当・時刻・証拠URLに分離する。
 - 介入前にユーザーが「進めてください」と承認した実験範囲は、**07への単発GSC申請**のみ。01への申請や複数手段での索引促進は新たな承認なしに行わない。
 - GSCブラウザ操作への権限がないチャットで実行済みと偽らない。
+
+## 2026-10-21 実施記録（介入直前・単発申請、Work Cloud Browser）
+
+検査担当: ChatGPT Work Cloud Browser。対象プロパティ: `https://josh-temple.github.io/instant-radio/`。下記のUTC/JSTは操作側の時計による記録。GSC画面にタイムゾーンの表示がない時刻には、タイムゾーンを補っていない。証拠画像は各リンク先に保存した。
+
+| 段階 | URL | 観測時刻（操作側） | GSC表示・実測 | 画面証拠 |
+|---|---|---|---|---|
+| 介入直前 Google Index | [slot01](https://josh-temple.github.io/instant-radio/articles/listen-slots/01.html) | 2026-10-21 03:35:45 UTC / 12:35:45 JST | `URL is not on Google`; `Page is not indexed: URL is unknown to Google`。最終クロール・Googlebot・取得・インデックス許可・user-declared / Google-selected canonical はいずれも `N/A`。参照元サイトマップ・ページ検出なし。 | [01 Index](https://chatgpt.com/api/library/files/libfile_c2ca560e435881918de7d47fd09ee588/download) |
+| 介入直前 Google Index | [slot07](https://josh-temple.github.io/instant-radio/articles/listen-slots/07.html) | 2026-10-21 03:36:38 UTC / 12:36:38 JST | `URL is not on Google`; `Page is not indexed: URL is unknown to Google`。最終クロール・Googlebot・取得・インデックス許可・user-declared / Google-selected canonical はいずれも `N/A`。参照元サイトマップ・ページ検出なし。 | [07 Index](https://chatgpt.com/api/library/files/libfile_44bc82024df48191a55168c0d468ca62/download) |
+| 介入直前 LIVE TEST（Google Indexとは別） | slot07 | 2026-10-21 03:37:46 UTC / 12:37:46 JST | `URL is available to Google`; `Page can be indexed`。画面の `Tested on: Oct 21, 2026, 12:37 PM`、`Crawl Time: Oct 21, 2026, 12:37:29 PM`（画面にタイムゾーン表示なし）。`Google Inspection Tool smartphone`、Crawl allowed `Yes`、Page fetch `Successful`、Indexing allowed `Yes`。user-declared canonical は07の自己URL。Google-selected canonical は `Only determined after indexing`。 | [07 live](https://chatgpt.com/api/library/files/libfile_4aee8ad517f48191b9f937e2f57e26ea/download)、[canonical・取得詳細](https://chatgpt.com/api/library/files/libfile_46cc6d16da98819180084b6eef51571a/download) |
+| 唯一の介入 | slot07 | ボタン押下 2026-10-21 03:39:15 UTC / 12:39:15 JST、受理表示確認 03:39:26 UTC / 12:39:26 JST | 07のGoogle Index画面で `REQUEST INDEXING` を**1回**押下。完了ダイアログは `Indexing requested`、`URL was added to a priority crawl queue. Submitting a page multiple times will not change its queue position or priority.`。ダイアログ内に日時表示なし。 | [07申請受理画面](https://chatgpt.com/api/library/files/libfile_cb973fbeff4881919c90be08c05eed96/download) |
+
+01には申請していない。この記録はGoogleが申請を受理したことだけを示し、クロール、検索Index登録、Android Chrome標準「このページを読み上げ」の可否は未確認。Android実機の同期観測はこのWork実行には含まれない。サイトHTML、canonical、sitemap、100スロット、Vercelには変更を加えていない。介入後の独立した再検査は未実施であり、フェーズ2の追跡観測として別途記録する。
