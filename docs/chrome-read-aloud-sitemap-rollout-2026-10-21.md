@@ -42,5 +42,49 @@ Google公式根拠：https://developers.google.com/search/docs/crawling-indexing
 ## 今回の作業ログ
 
 - サイトマップのGitHub追加と検証：GitHub PR/mergeで実行・確認。
-- GSCでのサイトマップの提出：この作業をWork Cloud Browserへ引き継ぐ。**GSC提出未実施を提出済みと記載しないこと。**
+- GSCでのサイトマップ提出と取得状況：下記「GSC提出実測」を参照。提出受理・Googleによる読取・URL発見を区別して記録。
 - 過去のslot07単独介入ログは書き換えず、観測時点の意味を保つ。
+
+
+## GSC提出実測（2026-10-21 JST）
+
+### 公開サイトマップの確認
+
+- Cloud Browserで対象URLを開き、XMLツリーを表示。取得時刻は19:47:11.310 JST。文書型は application/xml、標準名前空間の urlset を表示し、parsererror は0件。
+- Cloud Browser上のDOMで url 102件、loc 102件、重複なしを確認。01.html と100.htmlを含み、先頭はプロジェクトトップ、末尾は100.html。
+- 同URLへの匿名HTTP GETは19:57:37 JSTに 200 OK、Content-Type application/xml、本文10,071 bytes。
+- XMLを表示した画面： [サイトマップ画面](evidence/instant-radio-sitemap-xml-20261021.jpg)
+
+### Search Consoleの提出と取得状況
+
+- 対象プロパティ： https://josh-temple.github.io/instant-radio/
+- 提出直前の Submitted sitemaps は 0-0 of 0。既存登録がなかったため、重複送信ではない。
+- 19:55:09.146 JST、相対パス sitemap.xml を一度だけ送信。個別URLのインデックス登録リクエストは行っていない。
+- 19:55:22.018 JSTに “Sitemap submitted successfully” を確認。
+- 一覧画面（19:55:41.797 JST）： /sitemap.xml、Type Unknown、Submitted Oct 21, 2026、Status “Couldn't fetch”、Discovered pages 0、Discovered videos 0。詳細画面では Last read 列は空欄に見えた。
+- 詳細画面（19:56:48.644 JST）： Last read は 10/21/26（時刻は表示されない）、Discovered pages 0、Discovered videos 0、状態は “Sitemap could not be read”。
+- 取得エラーの詳細理由は画面に表示されなかった。
+
+### 解釈と実施範囲
+
+GSCはサイトマップの提出を受理したが、この確認時点でGoogleによる正常な取得・読取は確認できず、検出ページ数は0。公開URLがHTTP 200でXMLとして読めることと、Google側の取得・読取結果は別の観測である。提出成功を、102 URLの発見・個別URLのクロール・Google Index登録完了と同一視しない。特にslot01を含む100記事が現時点でGoogleに発見・登録されたとは確認できていない。
+
+サイトマップ提出は100記事への一括発見シグナルとなるが、slot01への個別インデックス登録リクエストは未実施。記事HTML、canonical、登録情報、PWA、Vercelは変更していない。過去のslot07単独介入記録も書き換えていない。
+
+### 画面証拠
+
+Cloud Browserで表示したXML先頭（slot01を含む）：
+
+![Cloud Browser XML sitemap](evidence/instant-radio-sitemap-xml-20261021.jpg)
+
+Search Consoleの提出受理画面：
+
+![GSC sitemap submission confirmation](evidence/instant-radio-gsc-submit-confirmed-20261021.jpg)
+
+提出一覧の取得状態と検出数：
+
+![GSC sitemap status row](evidence/instant-radio-gsc-sitemap-status-20261021.jpg)
+
+詳細画面の最終読取日とエラー：
+
+![GSC sitemap details](evidence/instant-radio-gsc-sitemap-detail-20261021.jpg)
