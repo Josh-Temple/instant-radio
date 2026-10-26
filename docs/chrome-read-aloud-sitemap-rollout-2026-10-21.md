@@ -106,3 +106,51 @@ ChatGPT Work Cloud Browserで既存の提出一覧と詳細を確認。2026-10-2
 ![詳細の最終読取日とエラー](evidence/ir-sitemap-detail-20261026.jpg)
 
 01・07・09のGoogle Index検査と読み上げ報告の照合は、[同日追補](chrome-read-aloud-gsc-slot07-intervention-2026-10-21.md)を参照。09はGSC上未登録のため、09の正常音声再生を検索Index登録済みと同一視しない。
+
+## 2026-10-27 取得失敗の原因調査（削除・再提出なし）
+
+### 公開応答と提出先
+
+- 匿名GET：2026-10-27 01:03:25 JST、HTTP 200、Content-Type `application/xml`、10,071 bytes。別のcurl GETでも200・リダイレクト0回を確認。
+- 公開本文はmain `d6f76e96e818424269786bbf21bd3feed8d35aa6` のsitemap.xmlとバイト一致。SHA-256 `ad20d71b6f6e9378bd661ba40c2b33f93a483ccf0f1223edaa2e7da2d0dbc120`。
+- XMLパース成功、urlsetの名前空間は `http://www.sitemaps.org/schemas/sitemap/0.9`。102 loc・重複0・全URLが対象プロパティ内。掲載先のローカル公開ファイルに欠落なし。100記事＋トップ＋一覧という既存の構成と一致する。
+- GSC詳細URLのsitemapパラメーターは `https://josh-temple.github.io/instant-radio/sitemap.xml`。一覧の `/sitemap.xml` はホスト直下への誤提出ではなく、このプロパティ内URLの表示だった。
+- ホスト直下 `https://josh-temple.github.io/robots.txt` は01:03:43 JST、404。ログイン要求、匿名GETの403/429、X-Robots-Tag、リダイレクト障害は今回の応答では認めない。404のrobots.txtはそれ自体クロール禁止ではない（[Google公式](https://developers.google.com/search/blog/2025/03/robotstxt-flexible-way-to-control)）。過去やGooglebot別経路の応答まで保証しない。
+- 応答には `Cache-Control: max-age=600`、通常のGitHub Pages CDNヘッダーがある。これだけで数日間のGoogle側失敗や読み上げ旧本文の原因とは判断できない。Last-Modifiedもデプロイ時刻のため、記事重要更新時刻と同一視しない。
+
+### GSCの保存済み提出状態とライブ取得
+
+提出詳細は引き続き **Sitemap could not be read**、Last read **10/21/26**、検出ページ0・動画0。一覧はCouldn't fetch / Unknown。展開可能な追加エラー項目や具体的HTTPエラーは表示されなかった。
+
+原因の切り分けとして、公式手順に沿い**サイトマップURLそのものの公開URLライブテスト**も実施した。これはサイトマップの再提出や個別インデックス登録申請ではない。
+
+- 画面表示：2026-10-27 01:04:19 AM（JST時計と整合）。Google Inspection Tool smartphone、Crawl allowed Yes、Page fetch **Successful**、Indexing allowed Yes。
+- View tested pageはSOURCEタブでXML宣言・正しいurlset名前空間・プロジェクトトップ・01〜23を含むlocを表示。公開XMLの内容と整合する。Google取得全文のバイト保存はclipboard空のため未達。
+- この成功は現在のGoogle検査経路がXMLを取得できる証拠。**サイトマップ処理系の取得・パース成功や102 URLの発見完了の証拠ではない。** Sitemap自体の検索Index登録は必要条件ではなく、画面のPage can be indexedをサイトマップ処理完了と読み替えない。
+
+### 仮説ごとの評価
+
+| 仮説 | 証拠と評価 | 未確認事項 |
+| --- | --- | --- |
+| XML構文・名前空間・掲載URLの誤り | 公開XMLはパース成功、102件整合。支持する証拠なし | Googleサイトマップ処理系のパースログ |
+| 誤ったURL・プロパティへ提出 | 詳細URLで正しい完全URLを確認。支持されない | なし（今回の提出レコードの範囲） |
+| 現在の恒常的な認証・robots・取得ブロック | 匿名200とGoogleライブSuccessful。支持されない | Googlebotと検査ツールの経路差・過去の応答 |
+| 提出時の一時的取得障害、その失敗表示の継続 | Last readが10/21のまま、現在ライブ成功と整合 | 初回失敗のHTTP/DNS/TLS記録、再試行履歴 |
+| Google側の処理待ち・レポート更新遅延 | 現在の取得成功と旧失敗表示の併存に整合 | サイトマップ処理ジョブの実行・内部状態 |
+
+**根本原因は未特定。現状を「Google側の不具合」と断定しない。** 取得失敗レコードと現在のGoogleライブ取得成功を分けて記録する。GitHub PagesのGooglebotアクセスログやGSC内部処理ログは取得できていないため、過去の取得経路を確定できない。
+
+### 推奨対応と公式根拠
+
+XMLやサイト設定の修正は不要と判断する（修正すべき欠陥を今回確認できないため）。まず現在の提出レコードを保ち、Last read・状態・検出数を再確認する。ただし、**待てば必ず解消するとは言えない**。
+
+[Google公式Sitemaps report](https://support.google.com/webmasters/answer/7451001?hl=en)は、ライブURL検査のPage fetch成功でアクセスを試験する手順を示す。一方、取得失敗後は数日再試行し、失敗が続けば停止する場合があるとしている。今回それが停止したかは確認できない。失敗が続く場合は、このライブ成功の証拠を添えてGoogle側へ照会し、既存URLの再提出を**別途判断**する。再提出には再取得を促す期待があるが、処理成功・Index登録・Chrome更新は保証できず、無介入観測にも影響する。今回の禁止事項に従い、削除・再提出はしていない。
+
+### 証拠
+
+- [提出詳細・10/21の失敗](evidence/ir-sitemap-detail-20261027.jpg)
+- [Googleライブ取得成功](evidence/ir-sitemap-live-20261027.jpg)
+- [Google取得XML SOURCE](evidence/ir-sitemap-source-20261027.jpg)
+- [匿名HTTPのヘッダー・XML検査・ハッシュ](evidence/ir-http-20261027.json)
+
+07/09の比較と固定URL再利用の評価は[同日追補](chrome-read-aloud-gsc-slot07-intervention-2026-10-21.md)を参照。Googleライブ成功をChrome音声更新や検索登録完了の証拠にはしていない。
