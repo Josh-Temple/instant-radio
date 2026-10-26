@@ -307,3 +307,43 @@ Git履歴ではPHP記事への変更は `363e7f6b99beaf96347aa6a3f7dadfd9ee745d2
 - サイトマップの結果と証拠は [同日追補](chrome-read-aloud-sitemap-rollout-2026-10-21.md) を参照。
 
 原因は未確定。今回の観測を保存し、修正・追加申請は行わない。
+
+## 2026-10-27 Googleライブ取得と旧本文の原因調査
+
+対象mainは `d6f76e96e818424269786bbf21bd3feed8d35aa6`。PR #42のmerged状態と既存2記録をfresh readした。以下の日時はGSC画面表示（今回のライブ表示はJST時計と整合）と匿名HTTP取得のJST時計を区別して記す。10月21日の最終クロール表示にはタイムゾーン表記がないため、再換算しない。
+
+### 保存済みIndex・ライブ・公開HTMLの比較
+
+| 項目 | 07 | 09 |
+| --- | --- | --- |
+| 保存済みIndex | URL is on Google / indexed | URL is not on Google / unknown |
+| 保存済み最終クロール | Oct 21, 2026, 12:43:51 PM（画面原文） | N/A |
+| 保存済み取得HTML | 竹取物語。title・description・JSON-LD articleBodyに旧本文 | View crawled page無効。HTML取得不可 |
+| 保存済みcanonical | 宣言URLは07自身。Google選択もInspected URL | N/A |
+| ライブ取得時刻 | 2026-10-27 01:01:01 JST相当の表示 | 2026-10-27 01:02:22 JST相当の表示 |
+| ライブ結果 | Successful / crawl allowed Yes / indexing allowed Yes / Page can be indexed | 同左 |
+| ライブHTML | PHPの重大な脆弱性とハッキングを理解する | 平家物語はなぜ声に出すと印象が変わるのか |
+| ライブcanonical | 07自身を宣言。Google選択はOnly determined after indexing | 09自身を宣言。Google選択はOnly determined after indexing |
+| 公開HTTP GET | 01:03:31 JST、200、PHP記事、mainとバイト一致 | 01:03:37 JST、200、平家物語、mainとバイト一致 |
+
+ライブHTMLビューのtitle・description・canonical・JSON-LD articleBodyを公開HTMLと照合し、07はPHP、09は平家物語の内容を取得していると確認した。エディターは仮想表示で、Copy editor content後もこの環境のclipboard読み取りは空だった。したがってGoogle取得HTML全文の原バイト保存・全文一致検査は未達であり、表示された内容の照合と画面証拠による確認に限定する。空の原文ファイルは証拠に含めない。公開HTTP本文とmainのバイト一致は別途確認済み。
+
+### 判断と限界
+
+- **07は再クロール遅延と整合する。** 保存済みIndexが旧本文で、今回のGoogle Inspection Toolによるライブ取得は新本文だった。現時点の公開HTMLがGoogleから取得不能、あるいは常に旧本文を返す、という説明は支持されない。
+- Chrome側の音声・本文キャッシュ、抽出結果の更新遅延、既存再生セッションの継続も未排除。Androidの再生通信や内部キャッシュは観測していない。検索Indexと読み上げ基盤が同一であるとは断定できない。実機音声の再試験も今回行っていない。
+- **09の未登録＋正常再生という10月26日のユーザー報告**は、「GSCに登録済みと表示されることが読み上げの必要条件」という強い仮説への反例になる。ただしGSCの表示遅延は排除できず、Google内部に一切データがないという意味でもない。今回の09ライブ成功は10月26日の再生を引き起こした証拠ではない。
+- mainの `sw.js` は旧キャッシュ削除と登録解除のみでfetchハンドラーはない。現行SWが旧記事を配る根拠はないが、実機の旧状態までは確認していない。
+- **即時反映を必要とする固定URL再利用は、今回の実測では実用上の前提にできない。** 表示本文と読み上げ本文の一致を保証できず、更新完了通知も確認できない。自動ローテーションを有効にせず、07の保存済みIndexの更新と実機音声の更新を別々に追跡する。
+- 次の実機確認では既存プレイヤーを閉じ、07を新たに開いて再生し、冒頭・タイトル・実施時刻を記録する。これでセッション継続の可能性を絞れるが、成功しても原因確定にはならない。即時配信が要件なら、表示中本文を直接読み上げる方式を別途比較検討する。今回は実装しない。
+
+Google公式の[URL検査の説明](https://support.google.com/webmasters/answer/9012289?hl=en)は保存済み結果とライブを区別し、ライブではGoogle選択canonicalを確定できないとしている。[Chromeの説明](https://support.google.com/chrome/answer/14768725?hl=en)は全サイトでの利用を保証せず、検索Index登録や更新反映時間を要件・保証として記載していない。今回参照した公式資料からは読み上げ内部の更新方式を特定できない。
+
+### 証拠
+
+- [07 保存済みIndex](evidence/ir07-index-20261027.jpg) / [旧HTML](evidence/ir07-index-html-20261027.jpg)
+- [07 ライブ結果](evidence/ir07-live-result-20261027.jpg) / [PHP取得HTML](evidence/ir07-live-20261027.jpg)
+- [09 保存済みIndex](evidence/ir09-index-20261027.jpg) / [ライブ結果](evidence/ir09-live-result-20261027.jpg) / [平家物語取得HTML](evidence/ir09-live-html-20261027.jpg)
+- [匿名HTTP応答・本文ハッシュ](evidence/ir-http-20261027.json)
+
+ライブテストは取得可能性の検査であり、検索Index更新完了・Chrome読み上げ本文更新完了の証拠ではない。01は検査・申請せず、07・09も個別登録申請していない。記事・canonical・URL・ローテーション設定を変更していない。サイトマップの調査は[同日追補](chrome-read-aloud-sitemap-rollout-2026-10-21.md)を参照。
