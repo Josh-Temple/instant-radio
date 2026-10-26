@@ -269,3 +269,41 @@ GitHub main `513069aa51c52cdf84e8b0fa55fcc88b0e06ade6` で確認された07のHT
 **管理上の注意：** `registry.json` の09の `read_aloud_status` は今回変更しない。リポジトリ運用規則では `confirmed` かつ `pinned=false` のスロットが自動本文入れ替え対象となるため、09の貴重な現行本文一致の陽性例を維持する目的で、実機成功記録とローテーション許可状態を区別する。記事・canonical・sitemap・GSC申請状態も変更しない。
 
 **次の未実施検証：** GSCの07・09・01の **Google Index（非ライブ）** URL検査、09のGoogle-selected canonical／最終クロール、およびサイトマップ読取状態を確認する。Index登録の再申請やサイトマップ再提出は不要。読み上げ可能性とGoogle Index状態の関係は、実測が揃うまで断定しない。
+
+
+## 2026-10-26 Google Index独立再検査：01・07・09
+
+担当：ChatGPT Work / Cloud Browser。GitHub main `cbde8a8` の既存記録をfresh readして実施。操作側時刻はブラウザの時計（UTC）をJSTへ換算。**Google Indexの保存済みデータのみを検査し、ライブURLテストは実施していない。** インデックス登録リクエスト、サイトマップ再提出、サイト本文・canonical・registry・PWAの変更はしていない。
+
+| URL | 証拠取得日時（JST） | Google Index | 最終クロール（GSC表示そのまま） | クロール・取得・Index許可 | User-declared canonical / Google-selected canonical |
+|---|---|---|---|---|---|
+| 01 | 2026-10-26 11:34:03 | URL is not on Google / URL is unknown to Google | N/A | すべてN/A、GooglebotもN/A | ともにN/A |
+| 07 | 2026-10-26 11:34:34 | URL is on Google / Page is indexed | Oct 21, 2026, 12:43:51 PM（画面にタイムゾーン表記なし） | Googlebot smartphone / Crawl allowed Yes / Page fetch Successful / Indexing allowed Yes | 07の自己URL / Inspected URL（07） |
+| 09 | 2026-10-26 11:35:34 | URL is not on Google / URL is unknown to Google | N/A | すべてN/A、GooglebotもN/A | ともにN/A |
+
+全3 URLでNo referring sitemaps detected / Referring page None detected。これはGSCの表示であり、Google内部の発見経路すべてを否定するものではない。01・09のView crawled pageは無効で、取得済み本文を確認できなかった。N/Aは取得失敗やIndex禁止を意味しない。
+
+### 07のGoogle取得済み本文
+
+07の **View crawled page → HTML** を開くと、title、description、JSON-LDのheadlineとarticleBodyに旧「竹取物語を『異世界との距離』の話として読む」が表示された。articleBodyは「竹取物語を…」「かぐや姫の物語を…」で始まり、旧記事の文章が続く。PHP記事ではない。11:34〜11:35 JSTに確認・画面保存。コピー機能では空文字しか取得できなかったため、HTMLファイルを取得済みとは扱わず画面証拠だけを保存した。
+
+Git履歴ではPHP記事への変更は `363e7f6b99beaf96347aa6a3f7dadfd9ee745d2a`（author日時2026-10-21 21:20:25 +09:00）。既存の公開記録とも照合した。GSCの最終クロール時刻にはタイムゾーン表示がないため、時刻差を厳密には計算しない。**今回表示された保存済み本文にはPHPへの更新が反映されておらず、更新後の再取得はこの検査から確認できない。** 未表示のクロールが一切なかったとまでは断定しない。
+
+### 実機報告との照合と解釈
+
+実機結果は今回のユーザー依頼に明示された報告（01不可、07は画面PHP・音声旧竹取物語、09は現行平家物語本文を再生成功）と、10月24日までの既存記録による。WorkがAndroidネイティブ音声を独立に試した結果ではない。正確な端末操作時刻、Chromeバージョン、録音は未取得で、GSCと厳密な同時観測ではない。
+
+1. **09は今回もGSC表示上は未登録。** 個別申請なしで登録済みになった、という仮説は今回の結果では支持されない。
+2. **09の正常な読み上げとGSC登録済み状態は対応していない。** 「検索Index登録が読み上げの必要条件」という仮説への反例候補。ただし観測時間差・GSC表示の遅延・内部状態の非公開性があり、Google内部で未登録のまま成功したと断定しない。読み上げと検索Indexが完全に独立とも結論しない。
+3. **07の旧音声は、Google取得済みHTMLも旧本文という事実と整合する。** 再クロール／保存済み本文の更新遅延は説明候補になる。ただし検索用クロールとChromeの本文抽出・音声生成の共有経路は未確認で、直接の因果は証明できない。端末やサービス側の保持状態も未特定。
+4. サイトマップは引き続き取得失敗・検出0件。09の読み上げをサイトマップの正常読取によるものとは説明できない。サイトマップ提出の影響が皆無とも断定しない。
+
+### 画面証拠
+
+- [01 Index](evidence/ir-slot01-index-20261026.jpg)
+- [07 Index・最終クロール・canonical](evidence/ir-slot07-index-20261026.jpg)
+- [07 Google取得済み旧本文](evidence/ir-slot07-crawled-20261026.jpg)
+- [09 Index](evidence/ir-slot09-index-20261026.jpg)
+- サイトマップの結果と証拠は [同日追補](chrome-read-aloud-sitemap-rollout-2026-10-21.md) を参照。
+
+原因は未確定。今回の観測を保存し、修正・追加申請は行わない。

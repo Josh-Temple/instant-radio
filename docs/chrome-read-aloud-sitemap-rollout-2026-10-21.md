@@ -88,3 +88,21 @@ Search Consoleの提出受理画面：
 詳細画面の最終読取日とエラー：
 
 ![GSC sitemap details](evidence/instant-radio-gsc-sitemap-detail-20261021.jpg)
+
+
+## 2026-10-26 サイトマップ再検査（再提出なし）
+
+ChatGPT Work Cloud Browserで既存の提出一覧と詳細を確認。2026-10-26 11:35〜11:36 JST、詳細証拠保存11:36:23 JST（操作側UTC時計から換算）。
+
+- 対象：`https://josh-temple.github.io/instant-radio/sitemap.xml`
+- 一覧：Type Unknown、Submitted Oct 21, 2026、Last read空欄、Status **Couldn't fetch**、Discovered pages **0**、videos **0**。
+- 詳細：Last read **10/21/26**（時刻・タイムゾーン表示なし）、Discovered pages **0**、videos **0**、**Sitemap could not be read**。
+- それ以上のエラー理由は詳細画面に表示されなかった。原因は未特定。
+- 10月21日の失敗状態から正常読取へ移行したことは確認できない。今回、公開XMLへのHTTP再取得やライブURLテストは実施していない。
+- 再提出・削除・サイトマップや記事の変更、個別Index申請は実施していない。
+
+![提出一覧の取得状態](evidence/ir-sitemap-status-20261026.jpg)
+
+![詳細の最終読取日とエラー](evidence/ir-sitemap-detail-20261026.jpg)
+
+01・07・09のGoogle Index検査と読み上げ報告の照合は、[同日追補](chrome-read-aloud-gsc-slot07-intervention-2026-10-21.md)を参照。09はGSC上未登録のため、09の正常音声再生を検索Index登録済みと同一視しない。
