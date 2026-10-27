@@ -154,3 +154,27 @@ XMLやサイト設定の修正は不要と判断する（修正すべき欠陥�
 - [匿名HTTPのヘッダー・XML検査・ハッシュ](evidence/ir-http-20261027.json)
 
 07/09の比較と固定URL再利用の評価は[同日追補](chrome-read-aloud-gsc-slot07-intervention-2026-10-21.md)を参照。Googleライブ成功をChrome音声更新や検索登録完了の証拠にはしていない。
+
+
+## 2026-10-27 サイトマップ再提出・直後の観測
+
+対象プロパティと登録済み完全URLは `https://josh-temple.github.io/instant-radio/` および `https://josh-temple.github.io/instant-radio/sitemap.xml`。Cloud Browserで詳細URLを確認。公開XMLは匿名GETでHTTP 200、XML解析成功、loc 102件・重複0件。
+
+| 項目 | 再提出前 | 再提出直後 |
+| --- | --- | --- |
+| 一覧の提出日 | Oct 21, 2026 | Oct 27, 2026 |
+| 一覧の最終読取日 | 空欄 | 空欄 |
+| 詳細の最終読取日 | 10/21/26 | 10/27/26 |
+| 状態 | Couldn't fetch | Couldn't fetch |
+| 詳細 | Sitemap could not be read | Sitemap could not be read |
+| 検出ページ / 動画 | 0 / 0 | 0 / 0 |
+
+操作側時計で2026-10-27 13:59:40 JSTに `sitemap.xml` を一度だけ送信。GSCは **Sitemap submitted successfully** と応答。登録削除なし。詳細の新しい日付は表示されたが時刻・タイムゾーンは表示されず、処理の正確な時刻や失敗原因は分からない。画面には追加の具体的理由がない。
+
+**再提出受理・取得成功未確認。** 直後の失敗表示が今後も続くかは未確認。提出受理、サイトマップの正常読取、URL発見、個別URLのIndex登録は別の事象。公開GET成功はGoogleサイトマップ処理の成功を示さない。根本原因は引き続き未特定。
+
+次回は別の実行として、一覧の提出日・状態・検出ページ／動画数、詳細の最終読取日とエラーを上記と比較する。時間経過後に更新される可能性はあるが成功を保証しない。01・07・09のIndexやChrome読み上げを評価する際には、この再提出を全102 URLへの発見促進を意図した介入として時系列に含める。今回、個別Index申請や記事・XML・canonical・registry・PWA・Vercelの変更は行っていない。
+
+- [再提出前の詳細](evidence/ir-gsc-before-resubmit-20261027.jpg)
+- [送信受理](evidence/ir-gsc-resubmit-accepted-20261027.jpg)
+- [再提出後の詳細](evidence/ir-gsc-after-resubmit-20261027.jpg)
